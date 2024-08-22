@@ -8,17 +8,17 @@ import (
 	"github.com/Bishoptylaor/paypay/alipay/flow"
 )
 
-type PayWithGiftProxy interface {
-	flow.PayWithGift
+type GoodsPromotionProxy interface {
+	flow.GoodsPromotion
 	InjectCustomPayloadCheckRuler(custom map[string][]paypay.Ruler)
 }
 
-type PayWithGiftCaller struct {
+type GoodsPromotionCaller struct {
 	*aliClient.Client
 	rulersMap map[string][]paypay.Ruler
 }
 
-// NewPayWithGiftCaller
+// NewGoodsPromotionCaller
 //
 // 初始化 支付有礼 相关接口功能
 //
@@ -27,9 +27,9 @@ type PayWithGiftCaller struct {
 // 在保证参数正确的情况下，用户也可直接调用 client 中的相关接口实现
 //
 // 产品介绍 https://opendocs.alipay.com/open/03o2f7?pathHash=e2a381af
-func NewPayWithGiftCaller(c *aliClient.Client) PayWithGiftProxy {
+func NewGoodsPromotionCaller(c *aliClient.Client) GoodsPromotionProxy {
 	// do some implantation
-	caller := &PayWithGiftCaller{Client: c}
+	caller := &GoodsPromotionCaller{Client: c}
 	// 设置本产品相关接口默认参数校验规则
 	caller.rulersMap = caller.setDefaultPayloadCheckRuler()
 	aliClient.SetChecker(caller.payloadChecker())(c)
@@ -42,7 +42,7 @@ func NewPayWithGiftCaller(c *aliClient.Client) PayWithGiftProxy {
 }
 
 // InjectCustomPayloadCheckRuler 外部可调用，用于自定义参数校验规则
-func (c PayWithGiftCaller) InjectCustomPayloadCheckRuler(custom map[string][]paypay.Ruler) {
+func (c GoodsPromotionCaller) InjectCustomPayloadCheckRuler(custom map[string][]paypay.Ruler) {
 	if c.rulersMap == nil {
 		c.rulersMap = c.setDefaultPayloadCheckRuler()
 	}
@@ -51,7 +51,7 @@ func (c PayWithGiftCaller) InjectCustomPayloadCheckRuler(custom map[string][]pay
 	}
 }
 
-func (c PayWithGiftCaller) payloadChecker() paypay.PayloadRuler {
+func (c GoodsPromotionCaller) payloadChecker() paypay.PayloadRuler {
 	return func(method string) []paypay.Ruler {
 		if rulers, ok := c.rulersMap[method]; ok {
 			return rulers
@@ -61,7 +61,7 @@ func (c PayWithGiftCaller) payloadChecker() paypay.PayloadRuler {
 	}
 }
 
-func (c PayWithGiftCaller) setDefaultPayloadCheckRuler() map[string][]paypay.Ruler {
+func (c GoodsPromotionCaller) setDefaultPayloadCheckRuler() map[string][]paypay.Ruler {
 	return map[string][]paypay.Ruler{
 		"alipay.marketing.activity.delivery.stop": []paypay.Ruler{
 			paypay.NewRuler("投放计划id", "delivery_id != nil && len(delivery_id) <= 128 && len(delivery_id) >= 1", fmt.Sprintf(consts.FmtEmptyAlert, "delivery_id")),
@@ -76,39 +76,30 @@ func (c PayWithGiftCaller) setDefaultPayloadCheckRuler() map[string][]paypay.Rul
 			paypay.NewRuler("商户接入模式", `merchant_access_mode in ["SELF_MODE", "AGENCY_MODE"]`, fmt.Sprintf(consts.FmtEmptyAlert, "out_biz_no")),
 		},
 		"alipay.marketing.activity.delivery.create": []paypay.Ruler{
-			paypay.NewRuler("展位编码", `delivery_booth_code == "PAYMENT_RESULT"`, "PAYMENT_RESULT：支付有礼"),
+			paypay.NewRuler("展位编码", `delivery_booth_code == "PREFER_CHANNEL"`, "消费圈: PREFER_CHANNEL"),
 			paypay.NewRuler("外部业务单号", "out_biz_no != nil && len(delivery_id) <= 64 && len(delivery_id) >= 1", fmt.Sprintf(consts.FmtEmptyAlert, "out_biz_no")),
 			paypay.NewRuler("商户接入模式",
 				`merchant_access_mode in ["SELF_MODE", "AGENCY_MODE"]`,
 				"merchant_access_mode 枚举值为 SELF_MODE, AGENCY_MODE",
 			),
 			paypay.NewRuler("投放计划基础信息",
-				"delivery_base_info != nil && "+
-					"delivery_base_info.delivery_name != nil && len(delivery_base_info.delivery_name) <= 20 && len(delivery_base_info.delivery_name) >= 1"+
-					"delivery_base_info.delivery_begin_time != nil && "+
-					"delivery_base_info.delivery_end_time != nil",
+				`delivery_base_info != nil && 
+delivery_base_info.delivery_name != nil && len(delivery_base_info.delivery_name) <= 20 && len(delivery_base_info.delivery_name) >= 1
+delivery_base_info.delivery_begin_time != nil
+delivery_base_info.delivery_end_time != nil`,
 				"时间格式为：yyyy-MM-dd HH:mm:ss",
 			),
 			paypay.NewRuler("投放计划玩法配置", "delivery_play_config != nil", fmt.Sprintf(consts.FmtEmptyAlert, "delivery_play_config")),
 			paypay.NewRuler("投放计划玩法配置详细校验",
-				`delivery_play_config.delivery_single_send_config?.delivery_content_info != nil &&
-delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_content_type in ["ACTIVITY", "MINI_APP", "MINI_APP_SERVICE"] &&
-(
-	(delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_content_type == "ACTIVITY" && delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_activity_content != nil && delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_activity_content.activity_id != nil)
-	||
-	(delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_content_type in ["MINI_APP", "MINI_APP_SERVICE"] && delivery_play_config.delivery_single_send_config?.delivery_content_info.delivery_display_info != nil)
-) &&
-float(delivery_play_config.delivery_full_send_config?.delivery_floor_amount) >= 0.01 && float(delivery_play_config.delivery_full_send_config?.delivery_floor_amount) <= 99999 &&
-delivery_play_config.delivery_full_send_config?.delivery_content_info != nil &&
-delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_content_type in ["ACTIVITY", "MINI_APP", "MINI_APP_SERVICE"] &&
-(
-	(delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_content_type == "ACTIVITY" && delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_activity_content != nil && delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_activity_content.activity_id != nil)
-	||
-	(delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_content_type in ["MINI_APP", "MINI_APP_SERVICE"] && delivery_play_config.delivery_full_send_config?.delivery_content_info.delivery_display_info != nil)
-)
-`,
-				"本接口参数较复杂，请结合原始文档判断 https://opendocs.alipay.com/open/47498bf2_alipay.marketing.activity.delivery.create?scene=8cb6764a5b944aa09266ed8109f74f62&pathHash=e94a8478",
+				`delivery_play_config.delivery_single_send_config != nil &&
+delivery_play_config.delivery_single_send_config.delivery_content_info != nil &&
+delivery_play_config.delivery_single_send_config.delivery_content_info.delivery_content_type == "APP_ITEM" &&
+delivery_play_config.delivery_single_send_config.delivery_content_info.delivery_item_content != nil && 
+delivery_play_config.delivery_single_send_config.delivery_content_info.delivery_item_content.item_id != nil && len(delivery_play_config.delivery_single_send_config.delivery_content_info.delivery_item_content.item_id != nil)<=64
+delivery_play_config.delivery_single_send_config.delivery_content_info.delivery_item_content.item_type in ["PHYSICAL", "GROUP_BUYING", "COUPON"]`,
+				"本接口参数较复杂，请结合原始文档判断 https://opendocs.alipay.com/open/be897535_alipay.marketing.activity.delivery.create?scene=e4bfc8fb692447d09570d161cda029a5&pathHash=a2c6e0bb",
 			),
+			paypay.NewRuler("幂等号", "idem_no != nil && len(idem_no)>=1 && len(idem_no)<=64", fmt.Sprintf(consts.FmtEmptyAlert, "idem_no")),
 		},
 	}
 }
