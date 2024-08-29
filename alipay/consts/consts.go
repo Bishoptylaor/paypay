@@ -1,18 +1,52 @@
+/*
+ *  ┏┓      ┏┓
+ *┏━┛┻━━━━━━┛┻┓
+ *┃　　　━　　  ┃
+ *┃   ┳┛ ┗┳   ┃
+ *┃           ┃
+ *┃     ┻     ┃
+ *┗━━━┓     ┏━┛
+ *　　 ┃　　　┃神兽保佑
+ *　　 ┃　　　┃代码无BUG！
+ *　　 ┃　　　┗━━━┓
+ *　　 ┃         ┣┓
+ *　　 ┃         ┏┛
+ *　　 ┗━┓┓┏━━┳┓┏┛
+ *　　   ┃┫┫  ┃┫┫
+ *      ┗┻┛　 ┗┻┛
+ @Time    : 2024/8/22 -- 12:19
+ @Author  : 亓官竹
+ @Copyright 2024 亓官竹
+ @Description: consts.go
+*/
+
 package consts
 
 import (
 	"fmt"
 	"github.com/Bishoptylaor/paypay"
+	"regexp"
+)
+
+var (
+	jsonCheck = regexp.MustCompile("(?i:(?:application|text)/json)")
+	xmlCheck  = regexp.MustCompile("(?i:(?:application|text)/xml)")
 )
 
 type PKCSType uint8
 
 const (
-	// BaseUrl URL
-	BaseUrl            = "https://openapi.alipay.com/gateway.do"
-	SandboxBaseUrl     = "https://openapi-sandbox.dl.alipaydev.com/gateway.do"
-	BaseUrlUtf8        = "https://openapi.alipay.com/gateway.do?charset=utf-8"
-	SandboxBaseUrlUtf8 = "https://openapi-sandbox.dl.alipaydev.com/gateway.do?charset=utf-8"
+	BaseUrl        = "https://openapi.alipay.com/gateway.do"               // 正式环境请求地址
+	SandboxBaseUrl = "https://openapi-sandbox.dl.alipaydev.com/gateway.do" // 沙箱环境请求地址
+
+	BaseUrlUtf8        = "https://openapi.alipay.com/gateway.do?charset=utf-8"               // 正式环境请求地址 utf-8
+	SandboxBaseUrlUtf8 = "https://openapi-sandbox.dl.alipaydev.com/gateway.do?charset=utf-8" // 沙箱环境请求地址 utf-8
+
+	PublicAppAuthUrlProduction  = "https://openauth.alipay.com/oauth2/publicAppAuthorize.htm"    // 正式环境授权登录地址
+	PublicAppAuthUrlDevelopment = "https://openauth.alipaydev.com/oauth2/publicAppAuthorize.htm" // 沙箱环境授权登录地址
+
+	AppToAppAuthUrlProduction  = "https://openauth.alipay.com/oauth2/appToAppAuth.htm"    // 正式环境第三方授权登录地址
+	AppToAppAuthUrlDevelopment = "https://openauth.alipaydev.com/oauth2/appToAppAuth.htm" // 沙箱环境第三方授权登录地址
 
 	BaseUrlV3        = "https://openapi.alipay.com/v3/"
 	SandboxBaseUrlV3 = "https://openapi.alipay.com/v3/"
@@ -21,28 +55,9 @@ const (
 	RSA              = "RSA"
 	RSA2             = "RSA2"
 	UTF8             = "utf-8"
+	PKCS1            = "PKCS1"
+	PKCS8            = "PKCS8"
 )
-
-func GetBaseUrlUtf8(prod bool) string {
-	if prod {
-		return BaseUrlUtf8
-	}
-	return SandboxBaseUrlUtf8
-}
-
-func GetBaseUrl(prod bool) string {
-	if prod {
-		return BaseUrl
-	}
-	return SandboxBaseUrl
-}
-
-func GetBaseUrlV3(prod bool) string {
-	if prod {
-		return BaseUrlV3
-	}
-	return SandboxBaseUrlV3
-}
 
 var (
 	TotalAmountDefaultRuler = paypay.NewRuler("订单总金额", `float(total_amount) >= 0.01 && float(total_amount) <= 100000000`, "请检查价格金额区间是否在 0.01 ~ 100000000")

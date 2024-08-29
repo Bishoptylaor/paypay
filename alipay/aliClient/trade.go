@@ -16,7 +16,7 @@ import (
 func (c *Client) TradePay(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradePayResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.pay"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradePayResponse)
@@ -39,7 +39,7 @@ func (c *Client) TradePay(ctx context.Context, pl paypay.Payload) (aliRes *entit
 func (c *Client) TradePrecreate(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradePrecreateResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.precreate"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradePrecreateResponse)
@@ -64,7 +64,7 @@ func (c *Client) TradePrecreate(ctx context.Context, pl paypay.Payload) (aliRes 
 func (c *Client) TradeAppPay(ctx context.Context, pl paypay.Payload) (payParam string, err error) {
 	var bs []byte
 	var method = "alipay.trade.app.pay"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return pkg.NULL, err
 	}
 	payParam = string(bs)
@@ -76,7 +76,7 @@ func (c *Client) TradeAppPay(ctx context.Context, pl paypay.Payload) (payParam s
 // 文档地址：https://opendocs.alipay.com/open/02ivbs
 func (c *Client) TradeWapPay(ctx context.Context, pl paypay.Payload) (payUrl string, err error) {
 	var bs []byte
-	if bs, err = c.doAliPay(ctx, pl, "alipay.trade.wap.pay"); err != nil {
+	if bs, err = c.callAli(ctx, pl, "alipay.trade.wap.pay"); err != nil {
 		return pkg.NULL, err
 	}
 	payUrl = string(bs)
@@ -89,7 +89,7 @@ func (c *Client) TradeWapPay(ctx context.Context, pl paypay.Payload) (payUrl str
 func (c *Client) TradePagePay(ctx context.Context, pl paypay.Payload) (payUrl string, err error) {
 	var bs []byte
 	var method = "alipay.trade.page.pay"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return pkg.NULL, err
 	}
 	payUrl = string(bs)
@@ -102,7 +102,7 @@ func (c *Client) TradePagePay(ctx context.Context, pl paypay.Payload) (payUrl st
 func (c *Client) TradeCreate(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCreateResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.create"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeCreateResponse)
@@ -123,10 +123,31 @@ func (c *Client) TradeCreate(ctx context.Context, pl paypay.Payload) (aliRes *en
 func (c *Client) TradeOrderPay(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeOrderPayResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.order.pay"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeOrderPayResponse)
+	if err = json.Unmarshal(bs, aliRes); err != nil || aliRes.Response == nil {
+		return nil, fmt.Errorf("[%w], bytes: %s", pkg.ErrUnmarshal, string(bs))
+	}
+	if err = utils.ExtractBussErr(aliRes.Response.ErrorResponse); err != nil {
+		return aliRes, err
+	}
+	signData, signDataErr := c.autoVerifySignByCert(ctx, bs, method, aliRes.AlipayCertSn)
+	aliRes.SignData = signData
+	return aliRes, signDataErr
+}
+
+// TradeWapMergePay
+// alipay.trade.wap.merge.pay(无线Wap合并支付接口2.0)
+// 文档地址：https://opendocs.alipay.com/solution/fc0cb136_alipay.trade.wap.merge.pay
+func (c *Client) TradeWapMergePay(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeWapMergePayResponse, err error) {
+	var bs []byte
+	var method = "alipay.trade.wap.merge.pay"
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
+		return nil, err
+	}
+	aliRes = new(entity.TradeWapMergePayResponse)
 	if err = json.Unmarshal(bs, aliRes); err != nil || aliRes.Response == nil {
 		return nil, fmt.Errorf("[%w], bytes: %s", pkg.ErrUnmarshal, string(bs))
 	}
@@ -144,7 +165,7 @@ func (c *Client) TradeOrderPay(ctx context.Context, pl paypay.Payload) (aliRes *
 func (c *Client) TradeQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeQueryResponse)
@@ -165,7 +186,7 @@ func (c *Client) TradeQuery(ctx context.Context, pl paypay.Payload) (aliRes *ent
 func (c *Client) TradeCancel(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCancelResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.cancel"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeCancelResponse)
@@ -186,7 +207,7 @@ func (c *Client) TradeCancel(ctx context.Context, pl paypay.Payload) (aliRes *en
 func (c *Client) TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.close"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeCloseResponse)
@@ -207,7 +228,7 @@ func (c *Client) TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *ent
 func (c *Client) TradeRefund(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeRefundResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.refund"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeRefundResponse)
@@ -235,7 +256,7 @@ func (c *Client) TradeRefund(ctx context.Context, pl paypay.Payload) (aliRes *en
 //	}
 //	var bs []byte
 //	var method = "alipay.trade.page.refund"
-//	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+//	if bs, err = c.callAli(ctx, pl, method); err != nil {
 //		return nil, err
 //	}
 //	aliRes = new(entity.TradePageRefundResponse)
@@ -256,7 +277,7 @@ func (c *Client) TradeRefund(ctx context.Context, pl paypay.Payload) (aliRes *en
 func (c *Client) TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeFastpayRefundQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.fastpay.refund.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeFastpayRefundQueryResponse)
@@ -277,7 +298,7 @@ func (c *Client) TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload)
 func (c *Client) TradeOrderInfoSync(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeOrderInfoSyncResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.orderinfo.sync"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeOrderInfoSyncResponse)
@@ -298,7 +319,7 @@ func (c *Client) TradeOrderInfoSync(ctx context.Context, pl paypay.Payload) (ali
 func (c *Client) TradeAdvanceConsult(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeAdvanceConsultResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.advance.consult"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeAdvanceConsultResponse)
@@ -319,7 +340,7 @@ func (c *Client) TradeAdvanceConsult(ctx context.Context, pl paypay.Payload) (al
 func (c *Client) TradeRepaybillQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeRepaybillQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.trade.repaybill.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.TradeRepaybillQueryResponse)

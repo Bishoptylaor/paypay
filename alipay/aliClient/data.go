@@ -1,3 +1,24 @@
+/*
+ *  ┏┓      ┏┓
+ *┏━┛┻━━━━━━┛┻┓
+ *┃　　　━　　  ┃
+ *┃   ┳┛ ┗┳   ┃
+ *┃           ┃
+ *┃     ┻     ┃
+ *┗━━━┓     ┏━┛
+ *　　 ┃　　　┃神兽保佑
+ *　　 ┃　　　┃代码无BUG！
+ *　　 ┃　　　┗━━━┓
+ *　　 ┃         ┣┓
+ *　　 ┃         ┏┛
+ *　　 ┗━┓┓┏━━┳┓┏┛
+ *　　   ┃┫┫  ┃┫┫
+ *      ┗┻┛　 ┗┻┛
+ @Time    : 2024/8/20 -- 10:55
+ @Author  : 亓官竹
+ @Description: data.go
+*/
+
 package aliClient
 
 import (
@@ -16,7 +37,7 @@ import (
 func (c *Client) DataBillEreceiptApply(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillEreceiptApplyResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.ereceipt.apply"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillEreceiptApplyResponse)
@@ -37,7 +58,7 @@ func (c *Client) DataBillEreceiptApply(ctx context.Context, pl paypay.Payload) (
 func (c *Client) DataBillEreceiptQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillEreceiptQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.ereceipt.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillEreceiptQueryResponse)
@@ -58,7 +79,7 @@ func (c *Client) DataBillEreceiptQuery(ctx context.Context, pl paypay.Payload) (
 func (c *Client) DataBillDownloadUrlQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillDownloadUrlQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.dataservice.bill.downloadurl.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillDownloadUrlQueryResponse)
@@ -79,7 +100,7 @@ func (c *Client) DataBillDownloadUrlQuery(ctx context.Context, pl paypay.Payload
 func (c *Client) DataBillBalanceQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillBalanceQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.balance.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillBalanceQueryResponse)
@@ -100,7 +121,7 @@ func (c *Client) DataBillBalanceQuery(ctx context.Context, pl paypay.Payload) (a
 func (c *Client) DataBillBalancehisQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillBalancehisQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.balancehis.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillBalancehisQueryResponse)
@@ -118,13 +139,13 @@ func (c *Client) DataBillBalancehisQuery(ctx context.Context, pl paypay.Payload)
 // DataBillAccountlogQuery
 // alipay.data.bill.accountlog.query(支付宝商家账户账务明细查询)
 // 文档地址：https://opendocs.alipay.com/open/dae3ac99_alipay.data.bill.accountlog.query
-func (c *Client) DataBillAccountlogQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillAccountLogQueryResponse, err error) {
+func (c *Client) DataBillAccountlogQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillAccountlogQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.accountlog.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
-	aliRes = new(entity.DataBillAccountLogQueryResponse)
+	aliRes = new(entity.DataBillAccountlogQueryResponse)
 	if err = json.Unmarshal(bs, aliRes); err != nil || aliRes.Response == nil {
 		return nil, fmt.Errorf("[%w], bytes: %s", pkg.ErrUnmarshal, string(bs))
 	}
@@ -142,7 +163,7 @@ func (c *Client) DataBillAccountlogQuery(ctx context.Context, pl paypay.Payload)
 func (c *Client) DataBillSellQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillSellQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.sell.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillSellQueryResponse)
@@ -163,7 +184,7 @@ func (c *Client) DataBillSellQuery(ctx context.Context, pl paypay.Payload) (aliR
 func (c *Client) DataBillBuyQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillBuyQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.buy.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillBuyQueryResponse)
@@ -184,7 +205,7 @@ func (c *Client) DataBillBuyQuery(ctx context.Context, pl paypay.Payload) (aliRe
 func (c *Client) DataBillTransferQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillTransferQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.transfer.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillTransferQueryResponse)
@@ -205,7 +226,7 @@ func (c *Client) DataBillTransferQuery(ctx context.Context, pl paypay.Payload) (
 func (c *Client) DataBillBailQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillBailQueryResponse, err error) {
 	var bs []byte
 	var method = "alipay.data.bill.bail.query"
-	if bs, err = c.doAliPay(ctx, pl, method); err != nil {
+	if bs, err = c.callAli(ctx, pl, method); err != nil {
 		return nil, err
 	}
 	aliRes = new(entity.DataBillBailQueryResponse)
