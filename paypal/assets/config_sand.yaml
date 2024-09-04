@@ -1,0 +1,10 @@
+# config.yaml
+client:
+  client_id: AbSkAmeRl40PdAk7LTD-dKpu-I1kdTV6VYgywViwv7RKYjFmIeFDFeMBMoK2_uXadlrLLgsWjmTJV-xH
+  client_secret: EJ8qu25jspPSLe65hwslbCWLUAoEm0wE9lOiHhSMikpfBj1-lRIAOHzC7OxuLb0lgLj5XuvOWTwBVOHp
+
+accounts:
+  - type: business
+    name: sb-fylie32523003@business.example.com
+  - type: personal
+    name: sb-xepyh32505727@personal.example.com
