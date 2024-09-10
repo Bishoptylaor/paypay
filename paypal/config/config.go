@@ -23,7 +23,11 @@
 package config
 
 import (
+	"bytes"
+	"context"
 	"github.com/Bishoptylaor/paypay/paypal/consts"
+	"github.com/Bishoptylaor/paypay/pkg/xlog"
+	"text/template"
 	"time"
 )
 
@@ -38,9 +42,20 @@ type Config struct {
 	ProxySandbox string // 代理 沙盒 URL
 }
 
-func (c Config) GenUrl(path string) string {
-	if c.Prod {
-		return consts.BaseUrl + path
+func (c Config) GenUrl(ctx context.Context, params interface{}) func(format string) string {
+	return func(format string) string {
+		fun := "BuildUri -->"
+		b := &bytes.Buffer{}
+		defer func() {
+			if r := recover(); r != nil {
+				xlog.Errorf(ctx, "%s fail err: template.Panic. format:%s, params:%+v", fun, format, params)
+			}
+		}()
+		_ = template.Must(template.New("").Parse(format)).Execute(b, params)
+
+		if c.Prod {
+			return consts.BaseUrl + b.String()
+		}
+		return consts.SandboxBaseUrl + b.String()
 	}
-	return consts.SandboxBaseUrl + path
 }

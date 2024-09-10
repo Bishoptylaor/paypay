@@ -24,12 +24,15 @@ package paypal
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/Bishoptylaor/paypay"
 	"github.com/Bishoptylaor/paypay/operate"
 	"github.com/Bishoptylaor/paypay/paypal/config"
+	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xutils"
+	"net/http"
 )
 
 type Client struct {
@@ -61,6 +64,10 @@ func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error)
 		return nil, err
 	}
 
+	_, err = client.GetAccessToken(ctx)
+	if err != nil {
+		return nil, err
+	}
 	go client.autoRefreshToken(ctx)
 
 	return client, nil
@@ -77,6 +84,28 @@ func (c *Client) setupCheck() error {
 		return pkg.ErrMissingInitParams
 	}
 	return nil
+}
+
+// handleResponse 处理 HTTP 响应，并填充结果结构体
+func (c *Client) handleResponse(ctx context.Context, method entity.Method, httpRes *http.Response, bs []byte, emptyRes *entity.EmptyRes, response interface{}) error {
+	if httpRes.StatusCode != method.ValidStatusCode {
+		emptyRes.Code = httpRes.StatusCode
+		emptyRes.Error = string(bs)
+		emptyRes.ErrorResponse = new(entity.ErrorResponse)
+		if err := json.Unmarshal(bs, emptyRes.ErrorResponse); err != nil {
+			return pkg.ErrUnmarshal
+		}
+		return nil
+	}
+
+	if err := json.Unmarshal(bs, response); err != nil {
+		return pkg.ErrUnmarshal
+	}
+	return nil
+}
+
+func (c *Client) Print() {
+
 }
 
 func IntegrityCheck(ctx context.Context, c *Client, method string) paypay.ExecuteElem {

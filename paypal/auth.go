@@ -50,7 +50,7 @@ func (c *Client) GetAccessToken(ctx context.Context) (token *entity.AccessToken,
 
 	res, bs, err := c.HClient.CallOp(ctx, pl,
 		xhttp.Req(xhttp.TypeFormData),
-		xhttp.Post(c.GenUrl(consts.AccessTokenPath)),
+		xhttp.Post(c.GenUrl(ctx, nil)(consts.AccessTokenPath)),
 		xhttp.Header(map[string]string{
 			"Accept":                   "*/*",
 			consts.HeaderAuthorization: authHeader,

@@ -38,6 +38,12 @@ func Checker(checker paypay.PayloadRuler) Settings {
 	}
 }
 
+func DefaultChecker() Settings {
+	return Checker(func(uri string) []paypay.Ruler {
+		return []paypay.Ruler{}
+	})
+}
+
 func PayloadPreSetter(setter map[string][]paypay.PayloadPreSetter) Settings {
 	return func(client *Client) {
 		client.PayloadPreSetter = setter
@@ -102,6 +108,7 @@ func NewSettings(ins ...Settings) []Settings {
 			[]Settings{},
 			DefaultLogger(),  // 设置 logger
 			DefaultHClient(), // 设置 Http client
+			DefaultChecker(), // 设置 checker 初始化
 		), ins...,
 	)
 }
