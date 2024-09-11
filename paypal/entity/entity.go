@@ -22,12 +22,9 @@
 
 package entity
 
-import "fmt"
-
-type Method struct {
-	Uri             string
-	ValidStatusCode int
-}
+import (
+	"fmt"
+)
 
 type APIError struct {
 	Code    int

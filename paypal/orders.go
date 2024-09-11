@@ -35,26 +35,10 @@ import (
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_create
 func (c *Client) CreateOrder(ctx context.Context, pl paypay.Payload) (res *entity.CreateOrderRes, err error) {
-	method := consts.CreateOrder
-	c.EmptyChecker = func(uri string) []paypay.Ruler {
-		_map := map[string][]paypay.Ruler{
-			method.Uri: []paypay.Ruler{
-				paypay.NewRuler("purchase_units",
-					`purchase_units != nil && len(purchase_units) <= 10 &&
-all(purchase_units, {.Amount != nil}) `,
-					"purchase_units 最多一次性传入10个",
-				),
-				paypay.NewRuler("intent", `intent in ["CAPTURE", "AUTHORIZE"]`, ""),
-			},
-		}
-		if rulers, ok := _map[uri]; ok {
-			return rulers
-		} else {
-			return []paypay.Ruler{}
-		}
-	}
+	method := CreateOrder
+	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := c.doPayPalPost(ctx, pl, consts.CreateOrder.Uri, c.GenUrl(ctx, nil))
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -72,15 +56,15 @@ all(purchase_units, {.Amount != nil}) `,
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_get
 func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.ShowOrderDetailsRes, err error) {
-	method := consts.ShowOrderDetails
+	method := ShowOrderDetails
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalGet(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id":     orderId,
 		"params": pl.EncodeURLParams(),
-	}))
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -98,14 +82,14 @@ func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_patch
 func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*entity.Patch) (res *entity.UpdateOrderRes, err error) {
-	method := consts.UpdateOrder
+	method := UpdateOrder
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPatch(ctx, patches, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}))
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -122,26 +106,15 @@ func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*ent
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_confirm
 func (c *Client) ConfirmOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.ConfirmOrderRes, err error) {
-	method := consts.ConfirmOrder
-	c.EmptyChecker = func(uri string) []paypay.Ruler {
-		_map := map[string][]paypay.Ruler{
-			method.Uri: []paypay.Ruler{
-				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
-			},
-		}
-		if rulers, ok := _map[uri]; ok {
-			return rulers
-		} else {
-			return []paypay.Ruler{}
-		}
-	}
+	method := ConfirmOrder
+	c.EmptyChecker = method.Checker
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPost(ctx, pl, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}))
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -159,26 +132,15 @@ func (c *Client) ConfirmOrder(ctx context.Context, orderId string, pl paypay.Pay
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_authorize
 func (c *Client) AuthorizeOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.AuthorizeOrderRes, err error) {
-	method := consts.AuthorizeOrder
-	c.EmptyChecker = func(uri string) []paypay.Ruler {
-		_map := map[string][]paypay.Ruler{
-			method.Uri: []paypay.Ruler{
-				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
-			},
-		}
-		if rulers, ok := _map[uri]; ok {
-			return rulers
-		} else {
-			return []paypay.Ruler{}
-		}
-	}
+	method := AuthorizeOrder
+	c.EmptyChecker = method.Checker
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPost(ctx, pl, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}))
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -196,26 +158,15 @@ func (c *Client) AuthorizeOrder(ctx context.Context, orderId string, pl paypay.P
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 func (c *Client) CaptureOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.CaptureOrderRes, err error) {
-	method := consts.CaptureOrder
-	c.EmptyChecker = func(uri string) []paypay.Ruler {
-		_map := map[string][]paypay.Ruler{
-			method.Uri: []paypay.Ruler{
-				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
-			},
-		}
-		if rulers, ok := _map[uri]; ok {
-			return rulers
-		} else {
-			return []paypay.Ruler{}
-		}
-	}
+	method := CaptureOrder
+	c.EmptyChecker = method.Checker
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPost(ctx, pl, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}))
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -233,28 +184,15 @@ func (c *Client) CaptureOrder(ctx context.Context, orderId string, pl paypay.Pay
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_track_create
 func (c *Client) AddTrackerForOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.AddTrackerForOrderRes, err error) {
-	method := consts.AddTracking4Order
-	c.EmptyChecker = func(uri string) []paypay.Ruler {
-		_map := map[string][]paypay.Ruler{
-			method.Uri: []paypay.Ruler{
-				paypay.NewRuler("tracking_number", `tracking_number != nil`, "运单号不为空"),
-				paypay.NewRuler("carrier", `carrier != nil`, "承运机构不为空"),
-				paypay.NewRuler("capture_id", `capture_id != nil`, "capture_id 不为空"),
-			},
-		}
-		if rulers, ok := _map[uri]; ok {
-			return rulers
-		} else {
-			return []paypay.Ruler{}
-		}
-	}
+	method := AddTracking4Order
+	c.EmptyChecker = method.Checker
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPost(ctx, pl, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}))
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -272,15 +210,15 @@ func (c *Client) AddTrackerForOrder(ctx context.Context, orderId string, pl payp
 // Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_trackers_patch
 func (c *Client) TrackersOfOrder(ctx context.Context, orderId, trackerId string, patches []*entity.Patch) (res *entity.TrackersOfOrderRes, err error) {
-	method := consts.AddTracking4Order
+	method := AddTracking4Order
 	if orderId == pkg.NULL {
-		return nil, pkg.ErrMissingInitParams
+		return nil, pkg.ErrPaypalMissingOrderId
 	}
 
-	httpRes, bs, err := c.doPayPalPatch(ctx, patches, method.Uri, c.GenUrl(ctx, map[string]string{
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id":         orderId,
 		"tracker_id": trackerId,
-	}))
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}

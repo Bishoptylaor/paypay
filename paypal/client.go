@@ -87,7 +87,7 @@ func (c *Client) setupCheck() error {
 }
 
 // handleResponse 处理 HTTP 响应，并填充结果结构体
-func (c *Client) handleResponse(ctx context.Context, method entity.Method, httpRes *http.Response, bs []byte, emptyRes *entity.EmptyRes, response interface{}) error {
+func (c *Client) handleResponse(ctx context.Context, method Method, httpRes *http.Response, bs []byte, emptyRes *entity.EmptyRes, response interface{}) error {
 	if httpRes.StatusCode != method.ValidStatusCode {
 		emptyRes.Code = httpRes.StatusCode
 		emptyRes.Error = string(bs)
@@ -110,6 +110,9 @@ func (c *Client) Print() {
 
 func IntegrityCheck(ctx context.Context, c *Client, method string) paypay.ExecuteElem {
 	return func(pl paypay.Payload) error {
+		if c.EmptyChecker == nil {
+			return nil
+		}
 		var ok bool
 		var err error
 		for _, ruler := range c.EmptyChecker(method) {

@@ -84,7 +84,7 @@ type PurchaseUnit struct {
 	InvoiceId          string              `json:"invoice_id,omitempty"`
 	Id                 string              `json:"id,omitempty"`
 	SoftDescriptor     string              `json:"soft_descriptor,omitempty"`
-	Items              []*Item             `json:"items,omitempty"`
+	Items              []*OrderItem        `json:"items,omitempty"`
 	Amount             *Amount             `json:"amount,omitempty"`
 	Payee              *Payee              `json:"payee,omitempty"`
 	PaymentInstruction *PaymentInstruction `json:"payment_instruction,omitempty"`
@@ -93,7 +93,7 @@ type PurchaseUnit struct {
 	Payments           *Payments           `json:"payments,omitempty"`
 }
 
-type Item struct {
+type OrderItem struct {
 	Name        string  `json:"name"`
 	Quantity    string  `json:"quantity"`
 	Description string  `json:"description,omitempty"`
@@ -164,8 +164,8 @@ type SupplementaryData struct {
 
 type Payments struct {
 	Authorizations []*Authorizations `json:"authorizations,omitempty"`
-	Captures       []*Captures       `json:"captures,omitempty"`
-	Refunds        []*Refunds        `json:"refunds,omitempty"`
+	Captures       []*Capture        `json:"captures,omitempty"`
+	Refunds        []*Refund         `json:"refunds,omitempty"`
 }
 
 type Authorizations struct {
@@ -187,7 +187,7 @@ type StatusDetails struct {
 	Reason string `json:"reason,omitempty"`
 }
 
-type Captures struct {
+type Capture struct {
 	Status                      string                       `json:"status,omitempty"`
 	StatusDetails               *StatusDetails               `json:"status_details"`
 	Id                          string                       `json:"id,omitempty"`
@@ -224,7 +224,7 @@ type NetworkTransactionReference struct {
 	Network                 string `json:"network,omitempty"`
 }
 
-type Refunds struct {
+type Refund struct {
 	Status        string `json:"status,omitempty"`
 	StatusDetails struct {
 		Reason string `json:"reason,omitempty"`
@@ -303,7 +303,7 @@ type Card struct {
 	AuthenticationResult *AuthenticationResult `json:"authentication_result,omitempty"`
 	Attributes           *Attributes           `json:"attributes,omitempty"`
 	Expiry               string                `json:"expiry,omitempty"`
-	BinDetails           []*BinDetails         `json:"bin_details,omitempty"`
+	BinDetails           []*BinDetail          `json:"bin_details,omitempty"`
 	BillingAddress       *Address              `json:"billing_address,omitempty"`
 	CountryCode          string                `json:"country_code,omitempty"`
 }
@@ -348,12 +348,17 @@ type Bancontact struct {
 }
 
 type Blik struct {
-	Name        string `json:"name,omitempty"`
-	CountryCode string `json:"country_code,omitempty"`
-	Email       string `json:"email,omitempty"`
-	OneClick    struct {
-		ConsumerReference string `json:"consumer_reference,omitempty"`
-	} `json:"one_click"`
+	Name        string        `json:"name,omitempty"`
+	CountryCode string        `json:"country_code,omitempty"`
+	Email       string        `json:"email,omitempty"`
+	OneClick    *BlikOneClick `json:"one_click"`
+}
+
+type BlikOneClick struct {
+	AuthCode          string `json:"auth_code,omitempty"`
+	ConsumerReference string `json:"consumer_reference"`
+	AliasLabel        string `json:"alias_label,omitempty"`
+	AliasKey          string `json:"alias_key,omitempty"`
 }
 
 type P24 struct {
@@ -418,7 +423,7 @@ type PhoneNumber struct {
 	NationalNumber string `json:"national_number,omitempty"`
 }
 
-type BinDetails struct {
+type BinDetail struct {
 	Bin            string   `json:"bin,omitempty"`
 	IssuingBank    string   `json:"issuing_bank,omitempty"`
 	Products       []string `json:"products,omitempty"`
