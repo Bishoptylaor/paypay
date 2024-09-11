@@ -20,7 +20,7 @@
  @Description: load.go
 */
 
-package zhttp
+package xhttp
 
 import (
 	"encoding/json"
@@ -49,6 +49,6 @@ func loadXml() loadFunc {
 	}
 }
 
-func defaultLoader() loadFunc {
-	return loadJson()
+func defaultLoader() CfgOp {
+	return Res(ResTypeJSON)
 }

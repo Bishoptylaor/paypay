@@ -1,4 +1,4 @@
-package zhttp
+package xhttp
 
 import (
 	"context"
@@ -11,12 +11,12 @@ import (
 
 func GetDefaultClient() HttpClientWrapper {
 	cfg := &httpConfig{
-		loader:   defaultLoader(),
-		Prefix:   nil,
-		Suffix:   nil,
+		Prefix:   []ReqPrefixFunc{},
+		Suffix:   []ResSuffixFunc{},
 		bodySize: 10,
 	}
-	cfg.reader = defaultReadFunc(cfg)
+	cfg.Use(defaultLoader())
+	cfg.Use(defaultReader())
 	return &HcWrapper{
 		client: &http.Client{
 			Transport: &http.Transport{

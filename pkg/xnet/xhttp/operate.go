@@ -20,7 +20,7 @@
  @Description: operate.go
 */
 
-package zhttp
+package xhttp
 
 import (
 	"bytes"
@@ -33,7 +33,7 @@ import (
 	"time"
 )
 
-var _MethodMap = map[string]func(url string) CfgFunc{
+var _MethodMap = map[string]func(url string) CfgOp{
 	http.MethodGet:     Get,
 	http.MethodPost:    Post,
 	http.MethodPut:     Put,
@@ -50,7 +50,7 @@ type httpConfig struct {
 	cookies     *http.Cookie
 	tlsCfg      *tls.Config
 	requestType string
-	reader      readFunc
+	reader      reader
 	loader      loadFunc
 	bodySize    int
 
@@ -58,8 +58,14 @@ type httpConfig struct {
 	Suffix []ResSuffixFunc
 }
 
-func (h *httpConfig) MakeReq(ctx context.Context, m map[string]any) (req *http.Request, err error) {
-	body, err := h.reader(m)
+func (h *httpConfig) Use(opts ...CfgOp) {
+	for _, opt := range opts {
+		opt(h)
+	}
+}
+
+func (h *httpConfig) MakeReq(ctx context.Context, v any) (req *http.Request, err error) {
+	body, err := h.reader(v)
 	if err != nil {
 		return nil, err
 	}
@@ -85,83 +91,101 @@ func (h *httpConfig) MakeResOk(ctx context.Context, res *http.Response, bs []byt
 	return h.MakeRes(ctx, res, bs, tar)
 }
 
-type CfgFunc func(*httpConfig)
+type CfgOp func(*httpConfig)
 
-func Post(url string) CfgFunc {
+func Post(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodPost
 		c.url = url
 	}
 }
 
-func Get(url string) CfgFunc {
+func Get(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodGet
 		c.url = url
 	}
 }
 
-func Put(url string) CfgFunc {
+func Put(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodPut
 		c.url = url
 	}
 }
 
-func Delete(url string) CfgFunc {
+func Delete(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodDelete
 		c.url = url
 	}
 }
 
-func Patch(url string) CfgFunc {
+func Patch(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodPatch
 		c.url = url
 	}
 }
 
-func Option(url string) CfgFunc {
+func Option(url string) CfgOp {
 	return func(c *httpConfig) {
 		c.method = http.MethodOptions
 		c.url = url
 	}
 }
 
-func Header(headers map[string]string) CfgFunc {
+func Header(headers map[string]string) CfgOp {
 	return func(c *httpConfig) {
+		if c.headers == nil {
+			c.headers = http.Header{}
+		}
+		if headers == nil {
+			return
+		}
 		for k, v := range headers {
 			c.headers.Set(k, v)
 		}
 	}
 }
 
-func Cookies(cookies *http.Cookie) CfgFunc {
+func Cookies(cookies *http.Cookie) CfgOp {
 	return func(c *httpConfig) {
 		c.cookies = cookies
 	}
 }
 
-func Prefix(prefix ...ReqPrefixFunc) CfgFunc {
+func Prefix(prefix ...ReqPrefixFunc) CfgOp {
+	return func(c *httpConfig) {
+		c.Prefix = append([]ReqPrefixFunc{}, prefix...)
+	}
+}
+
+func Suffix(suffix ...ResSuffixFunc) CfgOp {
+	return func(c *httpConfig) {
+		c.Suffix = append([]ResSuffixFunc{}, suffix...)
+	}
+}
+
+func AppendPrefix(prefix ...ReqPrefixFunc) CfgOp {
 	return func(c *httpConfig) {
 		c.Prefix = append(c.Prefix, prefix...)
 	}
 }
 
-func Suffix(suffix ...ResSuffixFunc) CfgFunc {
+func AppendSuffix(suffix ...ResSuffixFunc) CfgOp {
 	return func(c *httpConfig) {
 		c.Suffix = append(c.Suffix, suffix...)
 	}
 }
 
-func TLS(tlsC *tls.Config) CfgFunc {
+func TLS(tlsC *tls.Config) CfgOp {
 	return func(c *httpConfig) {
 		c.tlsCfg = tlsC
 	}
 }
 
-func Req(formType string) CfgFunc {
+func Req(formType string) CfgOp {
 	return func(c *httpConfig) {
 		c.reader = _ReqContentTypeReader[formType](c)
 		Header(map[string]string{
@@ -170,20 +194,20 @@ func Req(formType string) CfgFunc {
 	}
 }
 
-func Res(formType string) CfgFunc {
+func Res(formType string) CfgOp {
 	return func(c *httpConfig) {
 		c.loader = _ResContentTypeLoader[formType]
 	}
 }
 
 // BodySize set body size (MB), default is 10MB
-func BodySize(sizeMB int) CfgFunc {
+func BodySize(sizeMB int) CfgOp {
 	return func(c *httpConfig) {
 		c.bodySize = sizeMB
 	}
 }
 
-func Timeout(timeout time.Duration) CfgFunc {
+func Timeout(timeout time.Duration) CfgOp {
 	return func(c *httpConfig) {
 		c.timeout = timeout
 	}

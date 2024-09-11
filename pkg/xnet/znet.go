@@ -1,4 +1,4 @@
-package znet
+package xnet
 
 import (
 	"bytes"
@@ -67,7 +67,7 @@ func GetInterIp() (string, error) {
 		// check the address type and if it is not a loopback the display it
 		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
-				//fmt.Println(ipnet.IP.String())
+				// fmt.Println(ipnet.IP.String())
 				return ipnet.IP.String(), nil
 			}
 		}
@@ -101,7 +101,7 @@ func GetExterIp() (string, error) {
 	}
 
 	for _, addr := range addrs {
-		//fmt.Printf("Inter %v\n", addr)
+		// fmt.Printf("Inter %v\n", addr)
 		ips := addr.String()
 		idx := strings.LastIndex(ips, "/")
 		if idx == -1 {
@@ -119,9 +119,9 @@ func GetExterIp() (string, error) {
 		}
 		ip := ipv4.String()
 
-		//if "10." != ip[:3] && "172." != ip[:4] && "196." != ip[:4] && "127." != ip[:4] {
+		// if "10." != ip[:3] && "172." != ip[:4] && "196." != ip[:4] && "127." != ip[:4] {
 		//	return ip, nil
-		//}
+		// }
 		ok, _ := IsInterIp(ip)
 		if !ok && !ipv.IsLoopback() {
 			return ip, nil
@@ -199,7 +199,7 @@ func GetServAddr(a net.Addr) (string, error) {
 		raddr = net.JoinHostPort(inerip, port)
 	}
 
-	//slog.Tracef("ServAddr --> addr:[%s] ip:[%s] host:[%s] port:[%s] raddr[%s]", addr, ip, host, port, raddr)
+	// slog.Tracef("ServAddr --> addr:[%s] ip:[%s] host:[%s] port:[%s] raddr[%s]", addr, ip, host, port, raddr)
 
 	return raddr, nil
 }

@@ -1,4 +1,4 @@
-package zhttp
+package xhttp
 
 const (
 	ResTypeJSON = "json"
