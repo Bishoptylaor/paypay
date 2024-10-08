@@ -65,16 +65,16 @@ type TrackersOfOrderRes struct {
 // =========================================================分割=========================================================
 
 type OrderDetail struct {
-	CreateTime            string           `json:"create_time,omitempty"`
-	UpdateTime            string           `json:"update_time,omitempty"`
-	Id                    string           `json:"id,omitempty"`
-	ProcessingInstruction string           `json:"processing_instruction,omitempty"`
-	PurchaseUnits         []*PurchaseUnit  `json:"purchase_units,omitempty"`
-	Links                 []*Link          `json:"links,omitempty"`
-	PaymentSource         []*PaymentSource `json:"payment_source,omitempty"`
-	Intent                string           `json:"intent,omitempty"`
-	Payer                 *Payer           `json:"payer,omitempty"`
-	Status                string           `json:"status,omitempty"`
+	CreateTime            string          `json:"create_time,omitempty"`
+	UpdateTime            string          `json:"update_time,omitempty"`
+	Id                    string          `json:"id,omitempty"`
+	ProcessingInstruction string          `json:"processing_instruction,omitempty"`
+	PurchaseUnits         []*PurchaseUnit `json:"purchase_units,omitempty"`
+	Links                 []*Link         `json:"links,omitempty"`
+	PaymentSource         *PaymentSource  `json:"payment_source,omitempty"`
+	Intent                string          `json:"intent,omitempty"`
+	Payer                 *Payer          `json:"payer,omitempty"`
+	Status                string          `json:"status,omitempty"`
 }
 
 type PurchaseUnit struct {
@@ -163,12 +163,12 @@ type SupplementaryData struct {
 }
 
 type Payments struct {
-	Authorizations []*Authorizations `json:"authorizations,omitempty"`
-	Captures       []*Capture        `json:"captures,omitempty"`
-	Refunds        []*Refund         `json:"refunds,omitempty"`
+	Authorizations []*PaymentAuthorizationDetail `json:"authorizations,omitempty"`
+	Captures       []*PaymentCapture             `json:"captures,omitempty"`
+	Refunds        []*PaymentRefund              `json:"refunds,omitempty"`
 }
 
-type Authorizations struct {
+type PaymentAuthorizationDetail struct {
 	Status                      string                       `json:"status,omitempty"`
 	StatusDetails               *StatusDetails               `json:"status_details,omitempty"`
 	Id                          string                       `json:"id,omitempty"`
@@ -187,7 +187,7 @@ type StatusDetails struct {
 	Reason string `json:"reason,omitempty"`
 }
 
-type Capture struct {
+type PaymentCapture struct {
 	Status                      string                       `json:"status,omitempty"`
 	StatusDetails               *StatusDetails               `json:"status_details"`
 	Id                          string                       `json:"id,omitempty"`
@@ -224,7 +224,7 @@ type NetworkTransactionReference struct {
 	Network                 string `json:"network,omitempty"`
 }
 
-type Refund struct {
+type PaymentRefund struct {
 	Status        string `json:"status,omitempty"`
 	StatusDetails struct {
 		Reason string `json:"reason,omitempty"`

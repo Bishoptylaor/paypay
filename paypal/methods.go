@@ -80,11 +80,6 @@ all(purchase_units, {.Amount != nil}) `,
 		Uri:             "/v2/checkout/orders/{{.id}}/authorize",
 		ValidStatusCode: http.StatusCreated,
 		Do:              PostPayPal,
-		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
-			"/v2/checkout/orders/{{.id}}/authorize": []paypay.Ruler{
-				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
-			},
-		}),
 	}
 	// CaptureOrder order_id 订单支付捕获 POST
 	CaptureOrder Method = Method{
@@ -120,13 +115,48 @@ all(purchase_units, {.Amount != nil}) `,
 
 // 支付相关
 var (
-	paymentAuthorizeDetail  = "/v2/payments/authorizations/%s"             // authorization_id 支付授权详情 GET
-	paymentAuthorizeCapture = "/v2/payments/authorizations/%s/capture"     // authorization_id 支付授权捕获 POST
-	paymentReauthorize      = "/v2/payments/authorizations/%s/reauthorize" // authorization_id 重新授权支付授权 POST
-	paymentAuthorizeVoid    = "/v2/payments/authorizations/%s/void"        // authorization_id 作废支付授权 POST
-	paymentCaptureDetail    = "/v2/payments/captures/%s"                   // capture_id 支付捕获详情 GET
-	paymentCaptureRefund    = "/v2/payments/captures/%s/refund"            // capture_id 支付捕获退款 POST
-	paymentRefundDetail     = "/v2/payments/refunds/%s"                    // refund_id 支付退款详情 GET
+	// ShowAuthorizedPaymentDetails authorization_id 支付授权详情 GET
+	ShowAuthorizedPaymentDetails Method = Method{
+		Uri:             "/v2/payments/authorizations/{{.authorization_id}}",
+		ValidStatusCode: http.StatusCreated,
+		Do:              GetPayPal,
+	}
+	// CaptureAuthorizedPayment authorization_id 支付授权捕获 POST
+	CaptureAuthorizedPayment Method = Method{
+		Uri:             "/v2/payments/authorizations/{{.authorization_id}}/capture",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+	}
+	// ReauthorizePayment authorization_id 重新授权支付授权 POST
+	ReauthorizePayment Method = Method{
+		Uri:             "/v2/payments/authorizations/{{.authorization_id}}/reauthorize",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+	}
+	// VoidAuthorizePayment authorization_id 作废支付授权 POST
+	VoidAuthorizePayment Method = Method{
+		Uri:             "/v2/payments/authorizations/{{.authorization_id}}/void",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+	}
+	// ShowCapturedPayment capture_id 支付捕获详情 GET
+	ShowCapturedPayment Method = Method{
+		Uri:             "/v2/payments/captures/{{.capture_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// RefundCapturedPayment capture_id 支付捕获退款 POST
+	RefundCapturedPayment Method = Method{
+		Uri:             "/v2/payments/captures/{{.capture_id}}/refund",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+	}
+	// ShowRefundDetails refund_id 支付退款详情 GET
+	ShowRefundDetails Method = Method{
+		Uri:             "/v2/payments/refunds/{{.refund_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
 )
 
 var (

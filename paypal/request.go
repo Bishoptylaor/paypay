@@ -25,7 +25,6 @@ package paypal
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"github.com/Bishoptylaor/paypay"
 	"github.com/Bishoptylaor/paypay/paypal/consts"
 	"github.com/Bishoptylaor/paypay/paypal/entity"
@@ -41,7 +40,7 @@ type DoPayPalRequest func(ctx context.Context, uri string, urlGenerator func(str
 
 func GetPayPal(c *Client) DoPayPalRequest {
 	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
-		return c.doPayPal(ctx, xhttp.Get(urlGenerator(uri)), "")
+		return c.doPayPal(ctx, xhttp.Get(urlGenerator(uri)), "", nil)
 	}
 }
 
@@ -54,7 +53,7 @@ func PostPayPal(c *Client) DoPayPalRequest {
 		if err != nil {
 			return nil, nil, err
 		}
-		return c.doPayPal(ctx, xhttp.Post(urlGenerator(uri)), pl)
+		return c.doPayPal(ctx, xhttp.Post(urlGenerator(uri)), pl, nil)
 	}
 }
 
@@ -67,24 +66,24 @@ func PutPayPal(c *Client) DoPayPalRequest {
 		if err != nil {
 			return nil, nil, err
 		}
-		return c.doPayPal(ctx, xhttp.Put(urlGenerator(uri)), pl)
+		return c.doPayPal(ctx, xhttp.Put(urlGenerator(uri)), pl, nil)
 	}
 }
 
 func PatchPayPal(c *Client) DoPayPalRequest {
 	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error) {
-		body, _ := json.Marshal(patches)
-		return c.doPayPal(ctx, xhttp.Patch(urlGenerator(uri)), body)
+		// data, _ := json.Marshal(patches)
+		return c.doPayPal(ctx, xhttp.Patch(urlGenerator(uri)), patches, nil)
 	}
 }
 
 func DeletePayPal(c *Client) DoPayPalRequest {
 	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
-		return c.doPayPal(ctx, xhttp.Delete(urlGenerator(uri)), "")
+		return c.doPayPal(ctx, xhttp.Delete(urlGenerator(uri)), "", nil)
 	}
 }
 
-func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any) (res *http.Response, bs []byte, err error) {
+func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any, headers map[string]string) (res *http.Response, bs []byte, err error) {
 	res, bs, err = c.HClient.CallOp(ctx, data,
 		xhttp.Req(xhttp.TypeJSON), // default json
 		op,
@@ -92,6 +91,7 @@ func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any) (res *h
 			"Accept":                   "*/*",
 			consts.HeaderAuthorization: consts.AuthorizationPrefixBearer + c.AccessToken,
 		}),
+		xhttp.Header(headers),
 		xhttp.Prefix(PPReqPrefix(c.debug, c.Logger)),
 		xhttp.Suffix(PPResSuffix(c.debug, c.Logger)),
 	)
@@ -102,7 +102,7 @@ func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any) (res *h
 }
 
 // PPReqPrefix 闭包注入 logger 和 debug 信息
-func PPReqPrefix(debug bool, log xlog.ZLogger) xhttp.ReqPrefixFunc {
+func PPReqPrefix(debug bool, log xlog.XLogger) xhttp.ReqPrefixFunc {
 	return func(ctx context.Context, req *http.Request) context.Context {
 		if debug == pkg.DebugOn {
 			log.Debugf("PayPal_Url: %s", req.URL)
@@ -125,7 +125,7 @@ func PPReqPrefix(debug bool, log xlog.ZLogger) xhttp.ReqPrefixFunc {
 }
 
 // PPResSuffix 闭包注入 logger 和 debug 信息
-func PPResSuffix(debug bool, log xlog.ZLogger) xhttp.ResSuffixFunc {
+func PPResSuffix(debug bool, log xlog.XLogger) xhttp.ResSuffixFunc {
 	return func(ctx context.Context, res *http.Response) context.Context {
 		if debug == pkg.DebugOn {
 			log.Debugf("PayPal_Response: %d > %s", res.StatusCode, res.Body)

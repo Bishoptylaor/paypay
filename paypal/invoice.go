@@ -32,7 +32,6 @@ import (
 
 // CreateInvoice
 // 创建虚拟发票（Create draft invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_create
 func (c *Client) CreateInvoice(ctx context.Context, pl paypay.Payload) (res *entity.CreateInvoiceRes, err error) {
 	method := CreateInvoices
@@ -52,7 +51,6 @@ func (c *Client) CreateInvoice(ctx context.Context, pl paypay.Payload) (res *ent
 
 // ListInvoice
 // 发票列表（List invoices）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_list
 func (c *Client) ListInvoice(ctx context.Context, query paypay.Payload) (res *entity.ListInvoiceRes, err error) {
 	method := ListInvoices
@@ -74,7 +72,6 @@ func (c *Client) ListInvoice(ctx context.Context, query paypay.Payload) (res *en
 
 // SendInvoice
 // 发票列表（List invoices）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_send
 func (c *Client) SendInvoice(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.SendInvoiceRes, err error) {
 	method := SendInvoice
@@ -98,7 +95,6 @@ func (c *Client) SendInvoice(ctx context.Context, invoiceId string, pl paypay.Pa
 
 // SendInvoiceReminder
 // 发票列表（List invoices）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_send
 func (c *Client) SendInvoiceReminder(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.SendInvoiceReminderRes, err error) {
 	method := SendInvoiceReminder
@@ -122,7 +118,6 @@ func (c *Client) SendInvoiceReminder(ctx context.Context, invoiceId string, pl p
 
 // CancelSentInvoice
 // 取消已发送发票（Cancel sent invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_cancel
 func (c *Client) CancelSentInvoice(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.CancelSentInvoiceRes, err error) {
 	method := CancelSentInvoice
@@ -146,7 +141,6 @@ func (c *Client) CancelSentInvoice(ctx context.Context, invoiceId string, pl pay
 
 // RecordPaymentForInvoice
 // 记录发票付款（Record payment for invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_payments
 func (c *Client) RecordPaymentForInvoice(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.RecordPaymentForInvoiceRes, err error) {
 	method := RecordPaymentForInvoice
@@ -172,7 +166,6 @@ func (c *Client) RecordPaymentForInvoice(ctx context.Context, invoiceId string, 
 
 // DeleteExternalPayment
 // 删除额外支付（Delete external payment）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_payments-delete
 func (c *Client) DeleteExternalPayment(ctx context.Context, invoiceId, transactionId string) (res *entity.DeleteExternalPaymentRes, err error) {
 	method := DeleteExternalPayment
@@ -197,7 +190,6 @@ func (c *Client) DeleteExternalPayment(ctx context.Context, invoiceId, transacti
 
 // RecordRefundForInvoice
 // 记录发票退款（Record refund for invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_refunds
 func (c *Client) RecordRefundForInvoice(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.RecordRefundForInvoiceRes, err error) {
 	method := RecordRefundForInvoice
@@ -223,7 +215,6 @@ func (c *Client) RecordRefundForInvoice(ctx context.Context, invoiceId string, p
 
 // DeleteExternalRefund
 // 删除额外支付（Delete external refund）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_payments-delete
 func (c *Client) DeleteExternalRefund(ctx context.Context, invoiceId, transactionId string) (res *entity.DeleteExternalRefundRes, err error) {
 	method := DeleteExternalRefund
@@ -249,7 +240,6 @@ func (c *Client) DeleteExternalRefund(ctx context.Context, invoiceId, transactio
 
 // GenerateInvoiceQRCode
 // 生成发票二维码（Generate QR code）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_generate-qr-code
 func (c *Client) GenerateInvoiceQRCode(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.GenerateInvoiceQRCodeRes, err error) {
 	method := GenerateInvoiceQRCode
@@ -275,7 +265,6 @@ func (c *Client) GenerateInvoiceQRCode(ctx context.Context, invoiceId string, pl
 
 // GenerateInvoiceNumber
 // 生成发票码（Generate invoice number）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoicing_generate-next-invoice-number
 func (c *Client) GenerateInvoiceNumber(ctx context.Context, pl paypay.Payload) (res *entity.GenerateInvoiceNumberRes, err error) {
 	method := GenerateInvoiceNumber
@@ -295,7 +284,6 @@ func (c *Client) GenerateInvoiceNumber(ctx context.Context, pl paypay.Payload) (
 
 // ShowInvoiceDetail
 // 查看发票详情（Show invoice details）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_get
 func (c *Client) ShowInvoiceDetail(ctx context.Context, invoiceId string, pl paypay.Payload) (res *entity.ShowInvoiceDetailRes, err error) {
 	method := ShowInvoiceDetail
@@ -320,7 +308,6 @@ func (c *Client) ShowInvoiceDetail(ctx context.Context, invoiceId string, pl pay
 
 // FullyUpdateInvoice
 // 更新发票（Fully update invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_update
 func (c *Client) FullyUpdateInvoice(ctx context.Context, invoiceId string, query, pl paypay.Payload) (res *entity.FullyUpdateInvoiceRes, err error) {
 	method := FullyUpdateInvoice
@@ -346,7 +333,6 @@ func (c *Client) FullyUpdateInvoice(ctx context.Context, invoiceId string, query
 
 // DeleteInvoice
 // 删除发票（Delete invoice）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_delete
 func (c *Client) DeleteInvoice(ctx context.Context, invoiceId string) (res *entity.DeleteInvoiceRes, err error) {
 	method := DeleteInvoice
@@ -371,7 +357,6 @@ func (c *Client) DeleteInvoice(ctx context.Context, invoiceId string) (res *enti
 
 // SearchInvoice
 // 查询发票（Search for invoices）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_search-invoices
 func (c *Client) SearchInvoice(ctx context.Context, query, pl paypay.Payload) (res *entity.SearchInvoiceRes, err error) {
 	method := SearchInvoice
@@ -393,7 +378,6 @@ func (c *Client) SearchInvoice(ctx context.Context, query, pl paypay.Payload) (r
 
 // ListInvoiceTemplate
 // 发票模板列表（List templates）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#templates_list
 func (c *Client) ListInvoiceTemplate(ctx context.Context, query paypay.Payload) (res *entity.ListInvoiceTemplateRes, err error) {
 	method := ListInvoiceTemplate
@@ -415,7 +399,6 @@ func (c *Client) ListInvoiceTemplate(ctx context.Context, query paypay.Payload) 
 
 // CreateInvoiceTemplate
 // 创建发票模板（Create template）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#templates_create
 func (c *Client) CreateInvoiceTemplate(ctx context.Context, pl paypay.Payload) (res *entity.CreateInvoiceTemplateRes, err error) {
 	method := CreateInvoiceTemplate
@@ -435,7 +418,6 @@ func (c *Client) CreateInvoiceTemplate(ctx context.Context, pl paypay.Payload) (
 
 // ShowTemplateDetails
 // 查看模板详情（Show template details）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#templates_get
 func (c *Client) ShowTemplateDetails(ctx context.Context, templateId string, _ paypay.Payload) (res *entity.ShowTemplateDetailsRes, err error) {
 	method := ShowTemplateDetails
@@ -460,7 +442,6 @@ func (c *Client) ShowTemplateDetails(ctx context.Context, templateId string, _ p
 
 // FullyUpdateInvoiceTemplate
 // 更新发票模板（Fully update template）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#templates_update
 func (c *Client) FullyUpdateInvoiceTemplate(ctx context.Context, templateId string, pl paypay.Payload) (res *entity.FullyUpdateInvoiceTemplateRes, err error) {
 	method := FullyUpdateInvoiceTemplate
@@ -485,7 +466,6 @@ func (c *Client) FullyUpdateInvoiceTemplate(ctx context.Context, templateId stri
 
 // DeleteInvoiceTemplate
 // 删除发票模板（Delete template）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/invoicing/v2/#invoices_delete
 func (c *Client) DeleteInvoiceTemplate(ctx context.Context, templateId string) (res *entity.DeleteInvoiceTemplateRes, err error) {
 	method := DeleteInvoiceTemplate

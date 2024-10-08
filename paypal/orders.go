@@ -32,7 +32,6 @@ import (
 
 // CreateOrder
 // 创建订单（Create order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_create
 func (c *Client) CreateOrder(ctx context.Context, pl paypay.Payload) (res *entity.CreateOrderRes, err error) {
 	method := CreateOrder
@@ -53,7 +52,6 @@ func (c *Client) CreateOrder(ctx context.Context, pl paypay.Payload) (res *entit
 
 // ShowOrderDetails
 // 查看订单详情（Show order details）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_get
 func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.ShowOrderDetailsRes, err error) {
 	method := ShowOrderDetails
@@ -79,7 +77,6 @@ func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay
 
 // UpdateOrder
 // 更新订单（Update order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_patch
 func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*entity.Patch) (res *entity.UpdateOrderRes, err error) {
 	method := UpdateOrder
@@ -89,7 +86,7 @@ func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*ent
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), nil, nil)
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +100,6 @@ func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*ent
 
 // ConfirmOrder
 // 订单支付确认（Confirm the Order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_confirm
 func (c *Client) ConfirmOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.ConfirmOrderRes, err error) {
 	method := ConfirmOrder
@@ -129,7 +125,6 @@ func (c *Client) ConfirmOrder(ctx context.Context, orderId string, pl paypay.Pay
 
 // AuthorizeOrder
 // 订单支付确认（Authorize payment for order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_authorize
 func (c *Client) AuthorizeOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.AuthorizeOrderRes, err error) {
 	method := AuthorizeOrder
@@ -155,7 +150,6 @@ func (c *Client) AuthorizeOrder(ctx context.Context, orderId string, pl paypay.P
 
 // CaptureOrder
 // 订单支付确认（Capture payment for order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 func (c *Client) CaptureOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.CaptureOrderRes, err error) {
 	method := CaptureOrder
@@ -181,7 +175,6 @@ func (c *Client) CaptureOrder(ctx context.Context, orderId string, pl paypay.Pay
 
 // AddTrackerForOrder
 // 给订单添加物流信息（Add tracking information for an Order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_track_create
 func (c *Client) AddTrackerForOrder(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.AddTrackerForOrderRes, err error) {
 	method := AddTracking4Order
@@ -207,7 +200,6 @@ func (c *Client) AddTrackerForOrder(ctx context.Context, orderId string, pl payp
 
 // TrackersOfOrder
 // 更新或取消物流信息（Update or cancel tracking information for a PayPal order）
-// Code = 0 is success
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_trackers_patch
 func (c *Client) TrackersOfOrder(ctx context.Context, orderId, trackerId string, patches []*entity.Patch) (res *entity.TrackersOfOrderRes, err error) {
 	method := AddTracking4Order
