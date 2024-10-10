@@ -83,6 +83,9 @@ func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*ent
 	if orderId == pkg.NULL {
 		return nil, pkg.ErrPaypalMissingOrderId
 	}
+	if len(patches) == 0 {
+		return nil, pkg.ErrPaypalNothingToChange
+	}
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
@@ -205,6 +208,9 @@ func (c *Client) TrackersOfOrder(ctx context.Context, orderId, trackerId string,
 	method := AddTracking4Order
 	if orderId == pkg.NULL {
 		return nil, pkg.ErrPaypalMissingOrderId
+	}
+	if len(patches) == 0 {
+		return nil, pkg.ErrPaypalNothingToChange
 	}
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{

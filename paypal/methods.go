@@ -159,15 +159,38 @@ var (
 	}
 )
 
+// 支付 Payouts
 var (
-	// 支出
-	createBatchPayout         = "/v1/payments/payouts"                // 创建批量支出 POST
-	showPayoutBatchDetail     = "/v1/payments/payouts/%s"             // payout_batch_id 获取批量支出详情 GET
-	showPayoutItemDetail      = "/v1/payments/payouts-item/%s"        // payout_item_id 获取支出项目详情 GET
-	cancelUnclaimedPayoutItem = "/v1/payments/payouts-item/%s/cancel" // payout_item_id 取消支出项目 POST
-
-	// 订阅
-	subscriptionCreate = "/v1/billing/plans" // 创建订阅 POST
+	// CreateBatchPayout 创建批量支付 POST
+	CreateBatchPayout Method = Method{
+		Uri:             "/v1/payments/payouts",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/payments/payouts": []paypay.Ruler{
+				paypay.NewRuler("items", `items != nil`, "支付详情列表不能为空"),
+				paypay.NewRuler("sender_batch_header", `sender_batch_header != nil`, "批次号不能为空"),
+			},
+		}),
+	}
+	// ShowPayoutBatchDetail payout_batch_id 获取批量支付详情 GET
+	ShowPayoutBatchDetail Method = Method{
+		Uri:             "/v1/payments/payouts/{{.payout_batch_id}}?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// ShowPayoutItemDetail payout_item_id 获取支付项目详情 GET
+	ShowPayoutItemDetail Method = Method{
+		Uri:             "/v1/payments/payouts-item/{{.payout_item_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// CancelUnclaimedPayoutItem payout_item_id 取消支付项目 POST
+	CancelUnclaimedPayoutItem Method = Method{
+		Uri:             "/v1/payments/payouts-item/{{.payout_item_id}}/cancel",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+	}
 )
 
 // 发票 Invoices
@@ -315,3 +338,147 @@ var (
 		Do:              DeletePayPal,
 	}
 )
+
+// 订阅 类似支付宝周期扣款
+var (
+	// CreatePlan 创建订阅 POST
+	CreatePlan Method = Method{
+		Uri:             "/v1/billing/plans",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/plans": []paypay.Ruler{
+				paypay.NewRuler("product_id", `product_id != nil`, "通过目录产品 API 创建的产品的 ID 不为空"),
+				paypay.NewRuler("name", `name != nil`, "计划名 不为空"),
+				paypay.NewRuler("billing_cycles", `billing_cycles != nil`, "billing_cycles 不为空"),
+				paypay.NewRuler("payment_preferences", `payment_preferences != nil`, "payment_preferences 不为空"),
+				paypay.NewRuler("status", `(status != nil && status in ["CREATED", "INACTIVE", "ACTIVE"]) || status == nil`,
+					"status 默认 ACTIVE 或者 枚举值有误：ACTIVE，INACTIVE，CREATED"),
+			},
+		}),
+	}
+	// ListPlans 列表展示计划 GET
+	ListPlans Method = Method{
+		Uri:             "/v1/billing/plans?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// ShowPlanDetails plan_id 展示计划详情 GET
+	ShowPlanDetails Method = Method{
+		Uri:             "/v1/billing/plans/{{.plan_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// UpdatePlan plan_id 更新计划 patch
+	UpdatePlan Method = Method{
+		Uri:             "/v1/billing/plans/{{.plan_id}}",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PatchPayPal,
+	}
+	// ActivePlan plan_id 激活计划 POST
+	ActivePlan Method = Method{
+		Uri:             "/v1/billing/plans/{{.plan_id}}/activate",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+	}
+	DeactivePlan Method = Method{
+		Uri:             "/v1/billing/plans/{{.plan_id}}/deactivate",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+	}
+	// UpdatePricing plan_id 更新计划价格方案 POST
+	UpdatePricing Method = Method{
+		Uri:             "/v1/billing/plans/{{.plan_id}}/update-pricing-schemes",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+	}
+
+	// CreateSubscription 创建订阅 POST
+	CreateSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/subscriptions": []paypay.Ruler{
+				paypay.NewRuler("plan_id", `plan_id != nil`, "plan_id 不为空"),
+			},
+		}),
+	}
+	// ShowSubscriptionDetails subscription_id 展示订阅详情 GET
+	ShowSubscriptionDetails Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// UpdateSubscription subscription_id 更新订阅 PATCH
+	UpdateSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PatchPayPal,
+	}
+	// RevisePlanOrQuantityOfSubsription subscription_id 更新计划或者数量 POST
+	RevisePlanOrQuantityOfSubsription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/revise",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+	}
+	// SuspendSubscription subscription_id 暂定订阅计划 POST
+	SuspendSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/suspend",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/subscriptions/{{.subscription_id}}/suspend": []paypay.Ruler{
+				paypay.NewRuler("reason", `reason != nil`, "暂定原因 reason 不为空"),
+			},
+		}),
+	}
+	// CancelSubscription subscription_id 取消订阅 POST
+	CancelSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/cancel",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/subscriptions/{{.subscription_id}}/cancel": []paypay.Ruler{
+				paypay.NewRuler("reason", `reason != nil`, "取消原因 reason 不为空"),
+			},
+		}),
+	}
+	// ActivateSubscription subscription_id 激活订阅 POST
+	ActivateSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/activate",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PostPayPal,
+	}
+	// CaptureAuthoriedPaymentOnSubscription subscription_id 捕获订阅的授权支付信息 POST
+	CaptureAuthoriedPaymentOnSubscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/capture",
+		ValidStatusCode: http.StatusAccepted,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/subscriptions/{{.subscription_id}}/capture": []paypay.Ruler{
+				paypay.NewRuler("note", `note != nil`, "note 不为空"),
+				paypay.NewRuler("capture_type", `capture_type == "OUTSTANDING_BALANCE"`, "capture_type = OUTSTANDING_BALANCE The outstanding balance that the subscriber must clear"),
+				paypay.NewRuler("amount", `amount != nil && amount.currency_code != nil && amount.value != nil`, "amount 及其字段不为空"),
+			},
+		}),
+	}
+	// ListTransactions4Subscription subscription_id 列出一个订阅的所有交易记录
+	ListTransactions4Subscription Method = Method{
+		Uri:             "/v1/billing/subscriptions/{{.subscription_id}}/transactions?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/billing/subscriptions/{{.subscription_id}}/transactions": []paypay.Ruler{
+				paypay.NewRuler("start_time", `start_time != nil`, "query 参数 start_time 不为空"),
+				paypay.NewRuler("end_time", `end_time != nil`, "query 参数 end_time 不为空"),
+			},
+		}),
+	}
+)
+
+var EmptyMethod Method = Method{
+	Uri:             "",
+	ValidStatusCode: http.StatusOK,
+	Do:              PostPayPal,
+}

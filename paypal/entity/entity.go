@@ -53,8 +53,8 @@ type ErrorDetail struct {
 }
 
 type Link struct {
-	Href   string `json:"href,omitempty"`
-	Rel    string `json:"rel,omitempty"`
+	Href   string `json:"href"`
+	Rel    string `json:"rel"`
 	Method string `json:"method,omitempty"` // Possible values: GET,POST,PUT,DELETE,HEAD,CONNECT,OPTIONS,PATCH
 }
 
