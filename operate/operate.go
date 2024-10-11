@@ -35,5 +35,5 @@ type Operates struct {
 	EmptyChecker     paypay.PayloadRuler
 	PayloadPreSetter map[string][]paypay.PayloadPreSetter
 	HClient          xhttp.HttpClientWrapper
-	Logger           xlog.ZLogger
+	Logger           xlog.XLogger
 }
