@@ -1,4 +1,4 @@
-package xcrypto
+package base
 
 import (
 	"encoding/base64"
