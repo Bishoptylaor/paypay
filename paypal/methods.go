@@ -477,6 +477,28 @@ var (
 	}
 )
 
+// Transaction 交易
+var (
+	// ListTranscations 交易列表
+	ListTranscations Method = Method{
+		Uri:             "/v1/reporting/transactions?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/reporting/transactions": []paypay.Ruler{
+				paypay.NewRuler("start_date", `start_date != nil`, "query 参数 start_date 不为空"),
+				paypay.NewRuler("end_date", `end_date != nil`, "query 参数 end_date 不为空"),
+			},
+		}),
+	}
+	// ListAllBalances 获取所有余额
+	ListAllBalances Method = Method{
+		Uri:             "/v1/reporting/balances?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+)
+
 var EmptyMethod Method = Method{
 	Uri:             "",
 	ValidStatusCode: http.StatusOK,

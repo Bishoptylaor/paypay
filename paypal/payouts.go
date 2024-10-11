@@ -53,7 +53,7 @@ func (c *Client) CreateBatchPayout(ctx context.Context, pl paypay.Payload) (res 
 // ShowPayoutBatchDetail
 // 查看批量支付详情（Show payout batch details）
 // 文档：https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_get
-func (c *Client) ShowPayoutBatchDetail(ctx context.Context, batchId string, pl paypay.Payload) (res *entity.ShowPayoutBatchDetailRes, err error) {
+func (c *Client) ShowPayoutBatchDetail(ctx context.Context, batchId string, query paypay.Payload) (res *entity.ShowPayoutBatchDetailRes, err error) {
 	method := ShowPayoutBatchDetail
 	if batchId == pkg.NULL {
 		return nil, pkg.ErrPaypalMissingPayoutBatchId
@@ -61,8 +61,8 @@ func (c *Client) ShowPayoutBatchDetail(ctx context.Context, batchId string, pl p
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"payout_batch_id": batchId,
-		"params":          pl.EncodeURLParams(),
-	}), nil, nil)
+		"params":          query.EncodeURLParams(),
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
