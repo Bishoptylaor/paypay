@@ -7,107 +7,6 @@ type TradePayResponse struct {
 	Sign         string    `json:"sign"`
 }
 
-type TradePrecreateResponse struct {
-	Response     *TradePrecreate `json:"alipay_trade_precreate_response"`
-	NullResponse *ErrorResponse  `json:"null_response,omitempty"`
-	AlipayCertSn string          `json:"alipay_cert_sn,omitempty"`
-	SignData     string          `json:"-"`
-	Sign         string          `json:"sign"`
-}
-
-type TradeCreateResponse struct {
-	Response     *TradeCreate `json:"alipay_trade_create_response"`
-	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
-	SignData     string       `json:"-"`
-	Sign         string       `json:"sign"`
-}
-
-type TradeOrderPayResponse struct {
-	Response     *TradeOrderPay `json:"alipay_trade_order_pay_response"`
-	AlipayCertSn string         `json:"alipay_cert_sn,omitempty"`
-	SignData     string         `json:"-"`
-	Sign         string         `json:"sign"`
-}
-
-type TradeQueryResponse struct {
-	Response     *TradeQuery `json:"alipay_trade_query_response"`
-	AlipayCertSn string      `json:"alipay_cert_sn,omitempty"`
-	SignData     string      `json:"-"`
-	Sign         string      `json:"sign"`
-}
-
-type TradeCancelResponse struct {
-	Response     *TradeCancel `json:"alipay_trade_cancel_response"`
-	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
-	SignData     string       `json:"-"`
-	Sign         string       `json:"sign"`
-}
-
-type TradeCloseResponse struct {
-	Response     *TradeClose `json:"alipay_trade_close_response"`
-	AlipayCertSn string      `json:"alipay_cert_sn,omitempty"`
-	SignData     string      `json:"-"`
-	Sign         string      `json:"sign"`
-}
-
-type TradeRefundResponse struct {
-	Response     *TradeRefund `json:"alipay_trade_refund_response"`
-	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
-	SignData     string       `json:"-"`
-	Sign         string       `json:"sign"`
-}
-
-type TradePageRefundResponse struct {
-	Response     *TradePageRefund `json:"alipay_trade_page_refund_response"`
-	AlipayCertSn string           `json:"alipay_cert_sn,omitempty"`
-	SignData     string           `json:"-"`
-	Sign         string           `json:"sign"`
-}
-
-type TradeFastpayRefundQueryResponse struct {
-	Response     *TradeRefundQuery `json:"alipay_trade_fastpay_refund_query_response"`
-	AlipayCertSn string            `json:"alipay_cert_sn,omitempty"`
-	SignData     string            `json:"-"`
-	Sign         string            `json:"sign"`
-}
-
-type TradeOrderInfoSyncResponse struct {
-	Response     *TradeOrderInfoSync `json:"alipay_trade_orderinfo_sync_response"`
-	AlipayCertSn string              `json:"alipay_cert_sn,omitempty"`
-	SignData     string              `json:"-"`
-	Sign         string              `json:"sign"`
-}
-
-type TradeAdvanceConsultResponse struct {
-	Response     *TradeAdvanceConsult `json:"alipay_trade_advance_consult_response"`
-	AlipayCertSn string               `json:"alipay_cert_sn,omitempty"`
-	SignData     string               `json:"-"`
-	Sign         string               `json:"sign"`
-}
-
-type PcreditHuabeiAuthSettleApplyResponse struct {
-	Response     *PcreditHuabeiAuthSettleApply `json:"alipay_pcredit_huabei_auth_settle_apply_response"`
-	AlipayCertSn string                        `json:"alipay_cert_sn,omitempty"`
-	SignData     string                        `json:"-"`
-	Sign         string                        `json:"sign"`
-}
-
-type PaymentTradeOrderCreateResponse struct {
-	Response     *PaymentTradeOrderCreate `json:"mybank_payment_trade_order_create_response"`
-	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
-	SignData     string                   `json:"-"`
-	Sign         string                   `json:"sign"`
-}
-
-type TradeRepaybillQueryResponse struct {
-	Response     *TradeRepaybillQuery `json:"alipay_trade_repaybill_query_response"`
-	AlipayCertSn string               `json:"alipay_cert_sn,omitempty"`
-	SignData     string               `json:"-"`
-	Sign         string               `json:"sign"`
-}
-
-// =========================================================分割=========================================================
-
 type TradePay struct {
 	ErrorResponse
 	TradeNo             string           `json:"trade_no"`       // 支付宝交易号
@@ -135,25 +34,14 @@ type TradePay struct {
 	CreditBizOrderId    string           `json:"credit_biz_order_id"`
 }
 
-type TradeFundBill struct {
-	FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 https://opendocs.alipay.com/open/common/103259
-	Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
-	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
-	FundType    string `json:"fund_type,omitempty"`
-}
+// =========================================================分割=========================================================
 
-type VoucherDetail struct {
-	Id                         string `json:"id"`                                     // 券id
-	Name                       string `json:"name"`                                   // 券名称
-	Type                       string `json:"type"`                                   // 全场代金券: ALIPAY_FIX_VOUCHER 折扣券: ALIPAY_DISCOUNT_VOUCHER单品优惠券: ALIPAY_ITEM_VOUCHER 现金抵价券: ALIPAY_CASH_VOUCHER 商家全场券: ALIPAY_BIZ_VOUCHER
-	Amount                     string `json:"amount"`                                 // 优惠券面额，它应该会等于商家出资加上其他出资方出资
-	MerchantContribute         string `json:"merchant_contribute,omitempty"`          // 商家出资（特指发起交易的商家出资金额）
-	OtherContribute            string `json:"other_contribute,omitempty"`             // 其他出资方出资金额，可能是支付宝，可能是品牌商，或者其他方，也可能是他们的一起出资
-	Memo                       string `json:"memo,omitempty"`                         // 优惠券备注信息
-	TemplateId                 string `json:"template_id,omitempty"`                  // 券模板id
-	PurchaseBuyerContribute    string `json:"purchase_buyer_contribute,omitempty"`    // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时用户实际付款的金额
-	PurchaseMerchantContribute string `json:"purchase_merchant_contribute,omitempty"` // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时商户优惠的金额
-	PurchaseAntContribute      string `json:"purchase_ant_contribute,omitempty"`      // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时平台优惠的金额
+type TradePrecreateResponse struct {
+	Response     *TradePrecreate `json:"alipay_trade_precreate_response"`
+	NullResponse *ErrorResponse  `json:"null_response,omitempty"`
+	AlipayCertSn string          `json:"alipay_cert_sn,omitempty"`
+	SignData     string          `json:"-"`
+	Sign         string          `json:"sign"`
 }
 
 type TradePrecreate struct {
@@ -162,10 +50,28 @@ type TradePrecreate struct {
 	QrCode     string `json:"qr_code"`      // 当前预下单请求生成的二维码码串，有效时间2小时，可以用二维码生成工具根据该码串值生成对应的二维码
 }
 
+// =========================================================分割=========================================================
+
+type TradeCreateResponse struct {
+	Response     *TradeCreate `json:"alipay_trade_create_response"`
+	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
+	SignData     string       `json:"-"`
+	Sign         string       `json:"sign"`
+}
+
 type TradeCreate struct {
 	ErrorResponse
 	TradeNo    string `json:"trade_no"`
 	OutTradeNo string `json:"out_trade_no"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeOrderPayResponse struct {
+	Response     *TradeOrderPay `json:"alipay_trade_order_pay_response"`
+	AlipayCertSn string         `json:"alipay_cert_sn,omitempty"`
+	SignData     string         `json:"-"`
+	Sign         string         `json:"sign"`
 }
 
 type TradeOrderPay struct {
@@ -177,6 +83,31 @@ type TradeOrderPay struct {
 	TotalAmount       string `json:"total_amount,omitempty"`
 	GmtPayment        string `json:"gmt_payment,omitempty"`
 	AsyncPaymentMode  string `json:"async_payment_mode,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeWapMergePayResponse struct {
+	Response     *TradeWapMergePay `json:"alipay_trade_wap_merge_pay_response"`
+	AlipayCertSn string            `json:"alipay_cert_sn,omitempty"`
+	SignData     string            `json:"-"`
+	Sign         string            `json:"sign"`
+}
+
+type TradeWapMergePay struct {
+	ErrorResponse
+	OutMergeNo         string               `json:"out_merge_no"`         // 如果和支付宝约定子订单必须同时支付成功或者同时失败并且请求时传递了`out_merge_no`时才存在
+	MergePayStatus     string               `json:"merge_pay_status"`     // 1. FINISHED：全部订单付款成功 2. CLOSED：全部订单付款失败
+	OrderDetailResults []*OrderDetailResult `json:"order_detail_results"` // 合并子订单中所有订单的支付结果信息
+}
+
+// =========================================================分割=========================================================
+
+type TradeQueryResponse struct {
+	Response     *TradeQuery `json:"alipay_trade_query_response"`
+	AlipayCertSn string      `json:"alipay_cert_sn,omitempty"`
+	SignData     string      `json:"-"`
+	Sign         string      `json:"sign"`
 }
 
 type TradeQuery struct {
@@ -233,6 +164,243 @@ type TradeQuery struct {
 	ChargeInfoList        []*ChargeInfo        `json:"charge_info_list,omitempty"`         // 计费信息列表
 	BizSettleMode         string               `json:"biz_settle_mode,omitempty"`          // 账期结算标识，指已完成支付的订单会进行账期管控，不会实时结算。该参数目前会在使用小程序交易组件场景下返回
 	AsyncPayApplyStatus   string               `json:"async_pay_apply_status,omitempty"`   // 异步支付受理状态，仅异步支付模式且query_options指定async_pay_info时返回。S：受理成功，支付宝内部会在一定期限内捞起任务推进支付，直到支付成功或超出可重试期限；其它：受理结果未知，可重试查询。
+}
+
+// =========================================================分割=========================================================
+
+type TradeCancelResponse struct {
+	Response     *TradeCancel `json:"alipay_trade_cancel_response"`
+	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
+	SignData     string       `json:"-"`
+	Sign         string       `json:"sign"`
+}
+
+type TradeCancel struct {
+	ErrorResponse
+	TradeNo            string `json:"trade_no,omitempty"` // 支付宝交易号; 当发生交易关闭或交易退款时返回
+	OutTradeNo         string `json:"out_trade_no"`       // 商户订单号
+	RetryFlag          string `json:"retry_flag"`         // 是否需要重试
+	Action             string `json:"action,omitempty"`   // 本次撤销触发的交易动作,接口调用成功且交易存在时返回。可能的返回值： close：交易未支付，触发关闭交易动作，无退款； refund：交易已支付，触发交易退款动作； 未返回：未查询到交易，或接口调用失败
+	GmtRefundPay       string `json:"gmt_refund_pay,omitempty"`
+	RefundSettlementId string `json:"refund_settlement_id,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeCloseResponse struct {
+	Response     *TradeClose `json:"alipay_trade_close_response"`
+	AlipayCertSn string      `json:"alipay_cert_sn,omitempty"`
+	SignData     string      `json:"-"`
+	Sign         string      `json:"sign"`
+}
+
+type TradeClose struct {
+	ErrorResponse
+	TradeNo    string `json:"trade_no,omitempty"`     // 支付宝交易号
+	OutTradeNo string `json:"out_trade_no,omitempty"` // 创建交易传入的商户订单号
+}
+
+// =========================================================分割=========================================================
+
+type TradeRefundResponse struct {
+	Response     *TradeRefund `json:"alipay_trade_refund_response"`
+	AlipayCertSn string       `json:"alipay_cert_sn,omitempty"`
+	SignData     string       `json:"-"`
+	Sign         string       `json:"sign"`
+}
+
+type TradeRefund struct {
+	ErrorResponse
+	TradeNo                 string              `json:"trade_no"`                             // 支付宝交易号
+	OutTradeNo              string              `json:"out_trade_no"`                         // 商户订单号
+	BuyerLogonId            string              `json:"buyer_logon_id"`                       // 用户的登录id
+	RefundFee               string              `json:"refund_fee"`                           // 退款总金额。单位：元。 指该笔交易累计已经退款成功的金额。
+	RefundDetailItemList    []*TradeFundBill    `json:"refund_detail_item_list,omitempty"`    // 退款使用的资金渠道
+	StoreName               string              `json:"store_name,omitempty"`                 // 交易在支付时候的门店名称
+	BuyerUserId             string              `json:"buyer_user_id,omitempty"`              // 买家在支付宝的用户id
+	BuyerOpenId             string              `json:"buyer_open_id"`                        // 买家支付宝用户唯一标识
+	SendBackFee             string              `json:"send_back_fee,omitempty"`              // 本次商户实际退回金额。单位：元。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list
+	FundChange              string              `json:"fund_change,omitempty"`                // 本次退款是否发生了资金变化
+	RefundHybAmount         string              `json:"refund_hyb_amount,omitempty"`          // 本次请求退惠营宝金额。单位：元
+	RefundChargeInfoList    []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"`    // 退费信息
+	RefundVoucherDetailList []*VoucherDetail    `json:"refund_voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息。 只有在query_options中指定了refund_voucher_detail_list时才返回该字段信息
+
+	OpenId                       string                 `json:"open_id,omitempty"`
+	RefundCurrency               string                 `json:"refund_currency,omitempty"`
+	GmtRefundPay                 string                 `json:"gmt_refund_pay,omitempty"`
+	RefundPresetPaytoolList      []*RefundPresetPaytool `json:"refund_preset_paytool_list,omitempty"`
+	RefundChargeAmount           string                 `json:"refund_charge_amount,omitempty"`
+	RefundSettlementId           string                 `json:"refund_settlement_id,omitempty"`
+	PresentRefundBuyerAmount     string                 `json:"present_refund_buyer_amount,omitempty"`
+	PresentRefundDiscountAmount  string                 `json:"present_refund_discount_amount,omitempty"`
+	PresentRefundMdiscountAmount string                 `json:"present_refund_mdiscount_amount,omitempty"`
+	HasDepositBack               string                 `json:"has_deposit_back,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type TradePageRefundResponse struct {
+	Response     *TradePageRefund `json:"alipay_trade_page_refund_response"`
+	AlipayCertSn string           `json:"alipay_cert_sn,omitempty"`
+	SignData     string           `json:"-"`
+	Sign         string           `json:"sign"`
+}
+
+type TradePageRefund struct {
+	ErrorResponse
+	TradeNo      string `json:"trade_no,omitempty"`
+	OutTradeNo   string `json:"out_trade_no,omitempty"`
+	OutRequestNo string `json:"out_request_no,omitempty"`
+	RefundAmount string `json:"refund_amount,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeFastpayRefundQueryResponse struct {
+	Response     *TradeRefundQuery `json:"alipay_trade_fastpay_refund_query_response"`
+	AlipayCertSn string            `json:"alipay_cert_sn,omitempty"`
+	SignData     string            `json:"-"`
+	Sign         string            `json:"sign"`
+}
+
+type TradeRefundQuery struct {
+	ErrorResponse
+	TradeNo                 string              `json:"trade_no,omitempty"`                   // 支付宝交易号
+	OutTradeNo              string              `json:"out_trade_no,omitempty"`               // 创建交易传入的商户订单号
+	OutRequestNo            string              `json:"out_request_no,omitempty"`             // 本笔退款对应的退款请求号
+	RefundReason            string              `json:"refund_reason,omitempty"`              //
+	TotalAmount             string              `json:"total_amount,omitempty"`               // 该笔退款所对应的交易的订单金额。单位：元。
+	RefundAmount            string              `json:"refund_amount,omitempty"`              // 本次退款请求，对应的退款金额。单位：元。
+	RefundStatus            string              `json:"refund_status,omitempty"`              // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败； 注：如果退款查询发起时间早于退款时间，或者间隔退款发起时间太短，可能出现退款查询时还没处理成功，后面又处理成功的情况，建议商户在退款发起后间隔10秒以上再发起退款查询请求。
+	RefundRoyaltys          []*RefundRoyalty    `json:"refund_royaltys,omitempty"`            // 退分账明细信息，当前仅在直付通产品中返回。
+	GmtRefundPay            string              `json:"gmt_refund_pay,omitempty"`             // 退款时间。默认不返回该信息，需要在入参的query_options中指定"gmt_refund_pay"值时才返回该字段信息。
+	RefundDetailItemList    []*TradeFundBill    `json:"refund_detail_item_list,omitempty"`    // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
+	SendBackFee             string              `json:"send_back_fee,omitempty"`              // 本次商户实际退回金额；单位：元。
+	DepositBackInfo         *DepositBackInfo    `json:"deposit_back_info,omitempty"`          // 银行卡冲退信息； 默认不返回该信息，需要在入参的query_options中指定"deposit_back_info"值时才返回该字段信息。
+	RefundVoucherDetailList []VoucherDetail     `json:"refund_voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息。
+	RefundHybAmount         string              `json:"refund_hyb_amount,omitempty"`          // 本次退款金额中退惠营宝的金额。单位：元。
+	RefundChargeInfoList    []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"`    // 退费信息
+	DepositBackInfoList     []*DepositBackInfo  `json:"deposit_back_info_list,omitempty"`     // 银行卡冲退信息列表。 默认不返回该信息，需要在入参的query_options中指定"deposit_back_info_list"值时才返回该字段信息。
+}
+
+// =========================================================分割=========================================================
+
+type TradeOrderInfoSyncResponse struct {
+	Response     *TradeOrderInfoSync `json:"alipay_trade_orderinfo_sync_response"`
+	AlipayCertSn string              `json:"alipay_cert_sn,omitempty"`
+	SignData     string              `json:"-"`
+	Sign         string              `json:"sign"`
+}
+
+type TradeOrderInfoSync struct {
+	ErrorResponse
+	TradeNo     string `json:"trade_no"`
+	OutTradeNo  string `json:"out_trade_no"`
+	BuyerUserId string `json:"buyer_user_id"`
+	BuyerOpenId string `json:"buyer_open_id,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeAdvanceConsultResponse struct {
+	Response     *TradeAdvanceConsult `json:"alipay_trade_advance_consult_response"`
+	AlipayCertSn string               `json:"alipay_cert_sn,omitempty"`
+	SignData     string               `json:"-"`
+	Sign         string               `json:"sign"`
+}
+
+type TradeAdvanceConsult struct {
+	ErrorResponse
+	ReferResult             bool                      `json:"refer_result"`                         // true 代表当前时间点，用户允许垫资 false 代表当前时间，用户不允许垫资
+	WaitRepaymentOrderInfos []*WaitRepaymentOrderInfo `json:"wait_repayment_order_infos,omitempty"` // 待还订单列表，无论用户当前状态是否允许垫资，都会返回当前用户在商户下的待还订单信息
+	WaitRepaymentAmount     string                    `json:"wait_repayment_amount,omitempty"`      // 用户剩余的总待还金额，无论当前用户是否允许垫资，都会返回该属性。
+	WaitRepaymentOrderCount string                    `json:"wait_repayment_order_count,omitempty"` // 用户总的未还的垫资笔数，无论用户是否允许垫资，都会返回该属性
+	RiskLevel               string                    `json:"risk_level,omitempty"`                 // 订单风险评估等级，在单笔订单风险预评估时返回。当基础风险校验通过时，可通过该值获取业务风险评估等级。取值：2-高风险；1-低风险。
+	ResultMessage           string                    `json:"result_message"`                       // 返回用户不准入原因
+	ResultCode              string                    `json:"result_code"`                          // 用户被注销
+	UserRiskPrediction      *UserRiskPrediction       `json:"user_risk_prediction,omitempty"`       // 用户风险预测结果，包括用户拒付风险等级、用户绑定手机号被二次放号风险等级。
+}
+
+// =========================================================分割=========================================================
+
+type PcreditHuabeiAuthSettleApplyResponse struct {
+	Response     *PcreditHuabeiAuthSettleApply `json:"alipay_pcredit_huabei_auth_settle_apply_response"`
+	AlipayCertSn string                        `json:"alipay_cert_sn,omitempty"`
+	SignData     string                        `json:"-"`
+	Sign         string                        `json:"sign"`
+}
+
+type PcreditHuabeiAuthSettleApply struct {
+	ErrorResponse
+	OutRequestNo string `json:"out_request_no"`
+	FailReason   string `json:"fail_reason,omitempty"`
+}
+
+// =========================================================分割=========================================================
+
+type PaymentTradeOrderCreateResponse struct {
+	Response     *PaymentTradeOrderCreate `json:"mybank_payment_trade_order_create_response"`
+	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
+	SignData     string                   `json:"-"`
+	Sign         string                   `json:"sign"`
+}
+
+type PaymentTradeOrderCreate struct {
+	ErrorResponse
+}
+
+// =========================================================分割=========================================================
+
+type TradeRepaybillQueryResponse struct {
+	Response     *TradeRepaybillQuery `json:"alipay_trade_repaybill_query_response"`
+	AlipayCertSn string               `json:"alipay_cert_sn,omitempty"`
+	SignData     string               `json:"-"`
+	Sign         string               `json:"sign"`
+}
+
+type TradeRepaybillQuery struct {
+	ErrorResponse
+	BillNo                string `json:"bill_no"`
+	BillAmount            string `json:"bill_amount"`
+	BillOverdueAmount     string `json:"bill_overdue_amount"`
+	BillPaidAmount        string `json:"bill_paid_amount"`
+	BillPaidRevokedAmount string `json:"bill_paid_revoked_amount"`
+	BillRevokedAmount     string `json:"bill_revoked_amount"`
+	BillStatus            string `json:"bill_status"`
+}
+
+// =========================================================分割=========================================================
+
+type TradeFundBill struct {
+	FundChannel string `json:"fund_channel"` // 交易使用的资金渠道，详见 https://opendocs.alipay.com/open/common/103259
+	Amount      string `json:"amount"`       // 该支付工具类型所使用的金额
+	RealAmount  string `json:"real_amount"`  // 渠道实际付款金额
+	FundType    string `json:"fund_type,omitempty"`
+}
+
+type VoucherDetail struct {
+	Id                         string `json:"id"`                                     // 券id
+	Name                       string `json:"name"`                                   // 券名称
+	Type                       string `json:"type"`                                   // 全场代金券: ALIPAY_FIX_VOUCHER 折扣券: ALIPAY_DISCOUNT_VOUCHER单品优惠券: ALIPAY_ITEM_VOUCHER 现金抵价券: ALIPAY_CASH_VOUCHER 商家全场券: ALIPAY_BIZ_VOUCHER
+	Amount                     string `json:"amount"`                                 // 优惠券面额，它应该会等于商家出资加上其他出资方出资
+	MerchantContribute         string `json:"merchant_contribute,omitempty"`          // 商家出资（特指发起交易的商家出资金额）
+	OtherContribute            string `json:"other_contribute,omitempty"`             // 其他出资方出资金额，可能是支付宝，可能是品牌商，或者其他方，也可能是他们的一起出资
+	Memo                       string `json:"memo,omitempty"`                         // 优惠券备注信息
+	TemplateId                 string `json:"template_id,omitempty"`                  // 券模板id
+	PurchaseBuyerContribute    string `json:"purchase_buyer_contribute,omitempty"`    // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时用户实际付款的金额
+	PurchaseMerchantContribute string `json:"purchase_merchant_contribute,omitempty"` // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时商户优惠的金额
+	PurchaseAntContribute      string `json:"purchase_ant_contribute,omitempty"`      // 如果使用的这张券是用户购买的，则该字段代表用户在购买这张券时平台优惠的金额
+}
+
+type OrderDetailResult struct {
+	Appid          string `json:"appid"`        // 应用唯一标识
+	OutTradeNo     string `json:"out_trade_no"` // 商户订单号
+	TradeNo        string `json:"trade_no"`     // 支付宝交易号
+	TradeStatus    string `json:"trade_status"` // 1. TRADE_SUCCESS：付款成功 2. TRADE_FINISHED：交易完成 3. WAIT_BUYER_PAY：等待支付 4. TRADE_CLOSED：交易关闭
+	Subject        string `json:"subject"`
+	TotalAmount    string `json:"total_amount"`
+	SellerId       string `json:"seller_id"`       // 卖家支付宝用户ID。
+	PassbackParams string `json:"passback_params"` // 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。
 }
 
 type GoodsDetail struct {
@@ -300,50 +468,6 @@ type HbFqPayInfo struct {
 	UserInstallNum string `json:"user_install_num,omitempty"`
 }
 
-type TradeCancel struct {
-	ErrorResponse
-	TradeNo            string `json:"trade_no,omitempty"` // 支付宝交易号; 当发生交易关闭或交易退款时返回
-	OutTradeNo         string `json:"out_trade_no"`       // 商户订单号
-	RetryFlag          string `json:"retry_flag"`         // 是否需要重试
-	Action             string `json:"action,omitempty"`   // 本次撤销触发的交易动作,接口调用成功且交易存在时返回。可能的返回值： close：交易未支付，触发关闭交易动作，无退款； refund：交易已支付，触发交易退款动作； 未返回：未查询到交易，或接口调用失败
-	GmtRefundPay       string `json:"gmt_refund_pay,omitempty"`
-	RefundSettlementId string `json:"refund_settlement_id,omitempty"`
-}
-
-type TradeClose struct {
-	ErrorResponse
-	TradeNo    string `json:"trade_no,omitempty"`     // 支付宝交易号
-	OutTradeNo string `json:"out_trade_no,omitempty"` // 创建交易传入的商户订单号
-}
-
-type TradeRefund struct {
-	ErrorResponse
-	TradeNo                 string              `json:"trade_no"`                             // 支付宝交易号
-	OutTradeNo              string              `json:"out_trade_no"`                         // 商户订单号
-	BuyerLogonId            string              `json:"buyer_logon_id"`                       // 用户的登录id
-	RefundFee               string              `json:"refund_fee"`                           // 退款总金额。单位：元。 指该笔交易累计已经退款成功的金额。
-	RefundDetailItemList    []*TradeFundBill    `json:"refund_detail_item_list,omitempty"`    // 退款使用的资金渠道
-	StoreName               string              `json:"store_name,omitempty"`                 // 交易在支付时候的门店名称
-	BuyerUserId             string              `json:"buyer_user_id,omitempty"`              // 买家在支付宝的用户id
-	BuyerOpenId             string              `json:"buyer_open_id"`                        // 买家支付宝用户唯一标识
-	SendBackFee             string              `json:"send_back_fee,omitempty"`              // 本次商户实际退回金额。单位：元。 说明：如需获取该值，需在入参query_options中传入 refund_detail_item_list
-	FundChange              string              `json:"fund_change,omitempty"`                // 本次退款是否发生了资金变化
-	RefundHybAmount         string              `json:"refund_hyb_amount,omitempty"`          // 本次请求退惠营宝金额。单位：元
-	RefundChargeInfoList    []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"`    // 退费信息
-	RefundVoucherDetailList []*VoucherDetail    `json:"refund_voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息。 只有在query_options中指定了refund_voucher_detail_list时才返回该字段信息
-
-	OpenId                       string                 `json:"open_id,omitempty"`
-	RefundCurrency               string                 `json:"refund_currency,omitempty"`
-	GmtRefundPay                 string                 `json:"gmt_refund_pay,omitempty"`
-	RefundPresetPaytoolList      []*RefundPresetPaytool `json:"refund_preset_paytool_list,omitempty"`
-	RefundChargeAmount           string                 `json:"refund_charge_amount,omitempty"`
-	RefundSettlementId           string                 `json:"refund_settlement_id,omitempty"`
-	PresentRefundBuyerAmount     string                 `json:"present_refund_buyer_amount,omitempty"`
-	PresentRefundDiscountAmount  string                 `json:"present_refund_discount_amount,omitempty"`
-	PresentRefundMdiscountAmount string                 `json:"present_refund_mdiscount_amount,omitempty"`
-	HasDepositBack               string                 `json:"has_deposit_back,omitempty"`
-}
-
 type RefundChargeInfo struct {
 	RefundChargeFee        string          `json:"refund_charge_fee,omitempty"`          // 实退费用。单位：元。
 	SwitchFeeRate          string          `json:"switch_fee_rate,omitempty"`            // 签约费率
@@ -359,34 +483,6 @@ type RefundSubFee struct {
 type RefundPresetPaytool struct {
 	Amount         []string `json:"amount,omitempty"`
 	AssertTypeCode string   `json:"assert_type_code,omitempty"`
-}
-
-type TradePageRefund struct {
-	ErrorResponse
-	TradeNo      string `json:"trade_no,omitempty"`
-	OutTradeNo   string `json:"out_trade_no,omitempty"`
-	OutRequestNo string `json:"out_request_no,omitempty"`
-	RefundAmount string `json:"refund_amount,omitempty"`
-}
-
-type TradeRefundQuery struct {
-	ErrorResponse
-	TradeNo                 string              `json:"trade_no,omitempty"`                   // 支付宝交易号
-	OutTradeNo              string              `json:"out_trade_no,omitempty"`               // 创建交易传入的商户订单号
-	OutRequestNo            string              `json:"out_request_no,omitempty"`             // 本笔退款对应的退款请求号
-	RefundReason            string              `json:"refund_reason,omitempty"`              //
-	TotalAmount             string              `json:"total_amount,omitempty"`               // 该笔退款所对应的交易的订单金额。单位：元。
-	RefundAmount            string              `json:"refund_amount,omitempty"`              // 本次退款请求，对应的退款金额。单位：元。
-	RefundStatus            string              `json:"refund_status,omitempty"`              // 退款状态。枚举值： REFUND_SUCCESS 退款处理成功； 未返回该字段表示退款请求未收到或者退款失败； 注：如果退款查询发起时间早于退款时间，或者间隔退款发起时间太短，可能出现退款查询时还没处理成功，后面又处理成功的情况，建议商户在退款发起后间隔10秒以上再发起退款查询请求。
-	RefundRoyaltys          []*RefundRoyalty    `json:"refund_royaltys,omitempty"`            // 退分账明细信息，当前仅在直付通产品中返回。
-	GmtRefundPay            string              `json:"gmt_refund_pay,omitempty"`             // 退款时间。默认不返回该信息，需要在入参的query_options中指定"gmt_refund_pay"值时才返回该字段信息。
-	RefundDetailItemList    []*TradeFundBill    `json:"refund_detail_item_list,omitempty"`    // 本次退款使用的资金渠道； 默认不返回该信息，需要在入参的query_options中指定"refund_detail_item_list"值时才返回该字段信息。
-	SendBackFee             string              `json:"send_back_fee,omitempty"`              // 本次商户实际退回金额；单位：元。
-	DepositBackInfo         *DepositBackInfo    `json:"deposit_back_info,omitempty"`          // 银行卡冲退信息； 默认不返回该信息，需要在入参的query_options中指定"deposit_back_info"值时才返回该字段信息。
-	RefundVoucherDetailList []VoucherDetail     `json:"refund_voucher_detail_list,omitempty"` // 本交易支付时使用的所有优惠券信息。
-	RefundHybAmount         string              `json:"refund_hyb_amount,omitempty"`          // 本次退款金额中退惠营宝的金额。单位：元。
-	RefundChargeInfoList    []*RefundChargeInfo `json:"refund_charge_info_list,omitempty"`    // 退费信息
-	DepositBackInfoList     []*DepositBackInfo  `json:"deposit_back_info_list,omitempty"`     // 银行卡冲退信息列表。 默认不返回该信息，需要在入参的query_options中指定"deposit_back_info_list"值时才返回该字段信息。
 }
 
 type RefundRoyalty struct {
@@ -409,26 +505,6 @@ type DepositBackInfo struct {
 	EstBankReceiptTime string `json:"est_bank_receipt_time,omitempty"` // 预估银行到账时间，格式为yyyy-MM-dd HH:mm:ss
 }
 
-type TradeOrderInfoSync struct {
-	ErrorResponse
-	TradeNo     string `json:"trade_no"`
-	OutTradeNo  string `json:"out_trade_no"`
-	BuyerUserId string `json:"buyer_user_id"`
-	BuyerOpenId string `json:"buyer_open_id,omitempty"`
-}
-
-type TradeAdvanceConsult struct {
-	ErrorResponse
-	ReferResult             bool                      `json:"refer_result"`                         // true 代表当前时间点，用户允许垫资 false 代表当前时间，用户不允许垫资
-	WaitRepaymentOrderInfos []*WaitRepaymentOrderInfo `json:"wait_repayment_order_infos,omitempty"` // 待还订单列表，无论用户当前状态是否允许垫资，都会返回当前用户在商户下的待还订单信息
-	WaitRepaymentAmount     string                    `json:"wait_repayment_amount,omitempty"`      // 用户剩余的总待还金额，无论当前用户是否允许垫资，都会返回该属性。
-	WaitRepaymentOrderCount string                    `json:"wait_repayment_order_count,omitempty"` // 用户总的未还的垫资笔数，无论用户是否允许垫资，都会返回该属性
-	RiskLevel               string                    `json:"risk_level,omitempty"`                 // 订单风险评估等级，在单笔订单风险预评估时返回。当基础风险校验通过时，可通过该值获取业务风险评估等级。取值：2-高风险；1-低风险。
-	ResultMessage           string                    `json:"result_message"`                       // 返回用户不准入原因
-	ResultCode              string                    `json:"result_code"`                          // 用户被注销
-	UserRiskPrediction      *UserRiskPrediction       `json:"user_risk_prediction,omitempty"`       // 用户风险预测结果，包括用户拒付风险等级、用户绑定手机号被二次放号风险等级。
-}
-
 type WaitRepaymentOrderInfo struct {
 	AdvanceOrderId      string `json:"advance_order_id"` // 垫资单id
 	AlipayUserId        string `json:"alipay_user_id,omitempty"`
@@ -441,25 +517,4 @@ type WaitRepaymentOrderInfo struct {
 type UserRiskPrediction struct {
 	RefusedPaymentRiskLevel string `json:"refused_payment_risk_level,omitempty"` // 用户拒付风险等级。
 	PhoneRecycleRiskLevel   string `json:"phone_recycle_risk_leve,omitempty"`    // 用户绑定手机号被二次放号风险等级。
-}
-
-type PcreditHuabeiAuthSettleApply struct {
-	ErrorResponse
-	OutRequestNo string `json:"out_request_no"`
-	FailReason   string `json:"fail_reason,omitempty"`
-}
-
-type PaymentTradeOrderCreate struct {
-	ErrorResponse
-}
-
-type TradeRepaybillQuery struct {
-	ErrorResponse
-	BillNo                string `json:"bill_no"`
-	BillAmount            string `json:"bill_amount"`
-	BillOverdueAmount     string `json:"bill_overdue_amount"`
-	BillPaidAmount        string `json:"bill_paid_amount"`
-	BillPaidRevokedAmount string `json:"bill_paid_revoked_amount"`
-	BillRevokedAmount     string `json:"bill_revoked_amount"`
-	BillStatus            string `json:"bill_status"`
 }

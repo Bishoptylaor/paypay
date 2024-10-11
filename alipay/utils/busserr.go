@@ -15,14 +15,14 @@ type BussError struct {
 }
 
 // ExtractBussErr 检查业务码是否为10000 否则返回一个BizErr
-func ExtractBussErr(errRsp entity.ErrorResponse) error {
-	if errRsp.Code != "10000" {
-		suggesstion, ok := BussErrorCodeMap[errRsp.SubCode]
+func ExtractBussErr(errRes entity.ErrorResponse) error {
+	if errRes.Code != "10000" {
+		suggesstion, ok := BussErrorCodeMap[errRes.SubCode]
 		return &BussError{
-			Code:    errRsp.Code,
-			Msg:     errRsp.Msg,
-			SubCode: errRsp.SubCode,
-			SubMsg:  errRsp.SubMsg,
+			Code:    errRes.Code,
+			Msg:     errRes.Msg,
+			SubCode: errRes.SubCode,
+			SubMsg:  errRes.SubMsg,
 			Solution: func() string {
 				if ok {
 					return suggesstion.Solution
@@ -35,13 +35,13 @@ func ExtractBussErr(errRsp entity.ErrorResponse) error {
 }
 
 // ExtractBussErrFunc 如果有其他 code 算作业务成功，可以使用这个接口个性化出来
-func ExtractBussErrFunc(errRsp entity.ErrorResponse, f func() []string) error {
-	if !slices.Contains(f(), errRsp.Code) {
+func ExtractBussErrFunc(errRes entity.ErrorResponse, f func() []string) error {
+	if !slices.Contains(f(), errRes.Code) {
 		return &BussError{
-			Code:    errRsp.Code,
-			Msg:     errRsp.Msg,
-			SubCode: errRsp.SubCode,
-			SubMsg:  errRsp.SubMsg,
+			Code:    errRes.Code,
+			Msg:     errRes.Msg,
+			SubCode: errRes.SubCode,
+			SubMsg:  errRes.SubMsg,
 		}
 	}
 	return nil
@@ -51,9 +51,9 @@ func (e *BussError) Error() string {
 	return fmt.Sprintf(`{"code":"%s","msg":"%s","sub_code":"%s","sub_msg":"%s", "suggesstion": "%s"}`, e.Code, e.Msg, e.SubCode, e.SubMsg, e.Solution)
 }
 
-func IsBissError(err error) (*BussError, bool) {
-	if bissErr, ok := err.(*BussError); ok {
-		return bissErr, true
+func IsBussError(err error) (*BussError, bool) {
+	if bussErr, ok := err.(*BussError); ok {
+		return bussErr, true
 	}
 	return nil, false
 }
@@ -518,5 +518,165 @@ var BussErrorCodeMap = map[string]BussError{
 		SubCode:  "ACQ.ZM_CREDIT_AUTH_FAIL",
 		SubMsg:   "综合评估不通过",
 		Solution: "建议用户按时履约，提升芝麻信用等级",
+	},
+	"ACQ.CANCEL_NOT_ALLOWED": {
+		SubCode:  "ACQ.CANCEL_NOT_ALLOWED",
+		SubMsg:   "交易不允许撤销",
+		Solution: "该笔交易不支持撤销",
+	},
+	"ACQ.REASON_TRADE_BEEN_FREEZEN": {
+		SubCode:  "ACQ.REASON_TRADE_BEEN_FREEZEN",
+		SubMsg:   "当前交易被冻结，不允许进行撤销",
+		Solution: "联系支付宝小二，确认该笔交易的具体情况",
+	},
+	"ACQ.REASON_TRADE_REFUND_FEE_ERR": {
+		SubCode:  "ACQ.REASON_TRADE_REFUND_FEE_ERR",
+		SubMsg:   "退款金额无效",
+		Solution: "请确认交易是否已经发起过退款，已经退款场景下不能再发起撤销",
+	},
+	"ACQ.SELLER_BALANCE_NOT_ENOUGH": {
+		SubCode:  "ACQ.SELLER_BALANCE_NOT_ENOUGH",
+		SubMsg:   "商户的支付宝账户中无足够的资金进行撤销",
+		Solution: "商户支付宝账户充值后重新发起撤销即可",
+	},
+	"ACQ.TRADE_CANCEL_TIME_OUT": {
+		SubCode:  "ACQ.TRADE_CANCEL_TIME_OUT",
+		SubMsg:   "超过撤销时间范围",
+		Solution: "交易超过了撤销的时间范围，可使用退款接口发起交易退款",
+	},
+	"ACQ.TRADE_HAS_FINISHED": {
+		SubCode:  "ACQ.TRADE_HAS_FINISHED",
+		SubMsg:   "交易已经完结",
+		Solution: "请使用相同的参数再次调用",
+	},
+	"BILL_NOT_EXIST": {
+		SubCode:  "BILL_NOT_EXIST",
+		SubMsg:   "账单不存在",
+		Solution: "确认参数后重新查询",
+	},
+	"ACQ.ENTERPRISE_PAY_BIZ_ERROR": {
+		SubCode:  "ACQ.ENTERPRISE_PAY_BIZ_ERROR",
+		SubMsg:   "因公付业务异常",
+		Solution: "重新发起查询请求，如果多次重试后仍返回同样的错误，请联系支付宝小二处理",
+	},
+	"ACQ.ALLOC_AMOUNT_VALIDATE_ERROR": {
+		SubCode:  "ACQ.ALLOC_AMOUNT_VALIDATE_ERROR",
+		SubMsg:   "退分账金额超限",
+		Solution: "请调整退分账金额后重试",
+	},
+	"ACQ.BUYER_ERROR": {
+		SubCode:  "ACQ.BUYER_ERROR",
+		SubMsg:   "买家状态异常",
+		Solution: "联系支付宝小二确认买家状态异常原因，或者可联系买家进行线下退款处理",
+	},
+	"ACQ.CUSTOMER_VALIDATE_ERROR": {
+		SubCode:  "ACQ.CUSTOMER_VALIDATE_ERROR",
+		SubMsg:   "账户已注销或者被冻结",
+		Solution: "请查询账户状态：1. 如果账户已注销，请线下处理；2. 如果账户已冻结，请联系支付宝小二确认冻结原因。",
+	},
+	"ACQ.DISCORDANT_REPEAT_REQUEST": {
+		SubCode:  "ACQ.DISCORDANT_REPEAT_REQUEST",
+		SubMsg:   "请求信息不一致",
+		Solution: "退款请求号对应的退款已经执行成功，且本次请求的退款金额与之前请求的金额不一致，请检查传入的退款金额是否正确。 或者通过退款查询接口获取退款执行结果。",
+	},
+	"ACQ.NOT_ALLOW_PARTIAL_REFUND": {
+		SubCode:  "ACQ.NOT_ALLOW_PARTIAL_REFUND",
+		SubMsg:   "不支持部分退款",
+		Solution: "由于交易使用了特定的优惠券等场景，该笔交易不支持部分退款，请对交易进行全额退款或者联系买家进行线下退款处理",
+	},
+	"ACQ.ONLINE_TRADE_VOUCHER_NOT_ALLOW_REFUND": {
+		SubCode:  "ACQ.ONLINE_TRADE_VOUCHER_NOT_ALLOW_REFUND",
+		SubMsg:   "交易不允许退款",
+		Solution: "此交易中核销了购买的代金券，不允许进行退款，可联系买家进行线下退款处理",
+	},
+	"ACQ.OVERDRAFT_AGREEMENT_NOT_MATCH": {
+		SubCode:  "ACQ.OVERDRAFT_AGREEMENT_NOT_MATCH",
+		SubMsg:   "垫资退款接口传入模式和签约配置不一致",
+		Solution: "请检查垫资退款合约中的出资方式，修改合约或接口传参后重试",
+	},
+	"ACQ.OVERDRAFT_ASSIGN_ACCOUNT_INVALID": {
+		SubCode:  "ACQ.OVERDRAFT_ASSIGN_ACCOUNT_INVALID",
+		SubMsg:   "垫资退款出资账号和商户信息不一致",
+		Solution: "垫资退款出资账号必须为商户名下支付宝账号，请更换出资账号后重试",
+	},
+	"ACQ.REASON_TRADE_STATUS_INVALID": {
+		SubCode:  "ACQ.REASON_TRADE_STATUS_INVALID",
+		SubMsg:   "交易状态异常",
+		Solution: "查询交易，确认交易是否是支付成功状态，是的话可联系支付宝小二确认交易状态",
+	},
+	"ACQ.REFUND_ACCOUNT_NOT_EXIST": {
+		SubCode:  "ACQ.REFUND_ACCOUNT_NOT_EXIST",
+		SubMsg:   "退款出资账号不存在或账号异常",
+		Solution: "检查退款出资账号状态，账号正常后重试",
+	},
+	"ACQ.REFUND_AMT_NOT_EQUAL_TOTAL": {
+		SubCode:  "ACQ.REFUND_AMT_NOT_EQUAL_TOTAL",
+		SubMsg:   "退款金额超限",
+		Solution: "1、请检查退款金额是否正确，请求的退款金额不能大于交易总金额； 2、如果不是全额退款，退款请求号必填，请检查是否传入了退款请求号；",
+	},
+	"ACQ.REFUND_CHARGE_ERROR": {
+		SubCode:  "ACQ.REFUND_CHARGE_ERROR",
+		SubMsg:   "退收费异常",
+		Solution: "请过一段时间后再重试发起退款",
+	},
+	"ACQ.REFUND_FEE_ERROR": {
+		SubCode:  "ACQ.REFUND_FEE_ERROR",
+		SubMsg:   "交易退款金额有误",
+		Solution: "请检查传入的退款金额是否正确",
+	},
+	"ACQ.REFUND_ROYALTY_PAYEE_ACCOUNT_NOT_EXIST": {
+		SubCode:  "ACQ.REFUND_ROYALTY_PAYEE_ACCOUNT_NOT_EXIST",
+		SubMsg:   "退分账收入方账户不存在",
+		Solution: "退分账收入方账户不存在，请确认收入方账号是否正确，更换账号后重新发起",
+	},
+	"ACQ.TRADE_NOT_ALLOW_REFUND": {
+		SubCode:  "ACQ.TRADE_NOT_ALLOW_REFUND",
+		SubMsg:   "当前交易不允许退款",
+		Solution: "检查当前交易的状态是否为交易成功状态以及签约的退款属性是否允许退款，确认后，重新发起请求",
+	},
+	"AGREEMENT_HAS_UNSIGNED": {
+		SubCode:  "AGREEMENT_HAS_UNSIGNED",
+		SubMsg:   "用户协议已解约",
+		Solution: "用户于支付宝侧协议已解约，商户需解约对应协议",
+	},
+	"AUTHOREE_IS_NOT_MATCH": {
+		SubCode:  "AUTHOREE_IS_NOT_MATCH",
+		SubMsg:   "被授权方不匹配",
+		Solution: "确认商户app_id对应的被授权方与用户协议中的被授权方是否一致",
+	},
+	"MERCHANT_STATUS_IS_NOT_NORMAL": {
+		SubCode:  "MERCHANT_STATUS_IS_NOT_NORMAL",
+		SubMsg:   "商户协议状态不正常",
+		Solution: "检查商户协议是否正确",
+	},
+	"PARENT_MERCHANT_QUERY_FAIL": {
+		SubCode:  "PARENT_MERCHANT_QUERY_FAIL",
+		SubMsg:   "平台商户查询失败",
+		Solution: "检查父商户是否存在，或重试处理",
+	},
+	"PRODUCT_CODE_NOT_SUPPORTED_ERROR": {
+		SubCode:  "PRODUCT_CODE_NOT_SUPPORTED_ERROR",
+		SubMsg:   "无效的个人产品码",
+		Solution: "商户确认个人产品码填写是否正确",
+	},
+	"USER_AGREEMENT_NOT_EXIST": {
+		SubCode:  "USER_AGREEMENT_NOT_EXIST",
+		SubMsg:   "用户协议不存在",
+		Solution: "检查用户协议是否正确",
+	},
+	"USER_NOT_EXIST_ERROR": {
+		SubCode:  "USER_NOT_EXIST_ERROR",
+		SubMsg:   "支付宝用户信息不存在",
+		Solution: "检查用户信息是否正确",
+	},
+	"USER_NOT_EXSIT_ERROR": {
+		SubCode:  "USER_NOT_EXSIT_ERROR",
+		SubMsg:   "用户信息不存在",
+		Solution: "检查用户信息是否正确",
+	},
+	"temp": {
+		SubCode:  "",
+		SubMsg:   "",
+		Solution: "",
 	},
 }

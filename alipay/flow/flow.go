@@ -13,6 +13,11 @@ type ExecuteFlow interface {
 	PageExecute(ctx context.Context, pl paypay.Payload, method string, authToken ...string) (url string, err error)
 }
 
-type DataBillFlow interface {
-	DataBillDownloadUrlQuery(ctx context.Context, pl paypay.Payload) (aliRsp *entity.DataBillDownloadUrlQueryResponse, err error) // 对账单下载地址接口
+type DataBillDownloadFlow interface {
+	DataBillDownloadUrlQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.DataBillDownloadUrlQueryResponse, err error) // 对账单下载地址接口
+}
+
+type NotifyFlow interface {
+	TradeRefundDepositbackCompleted(ctx context.Context, vals map[string][]string) (*entity.TradeRefundDepositbackCompletedReq, error)   // 收单退款冲退完成通知
+	MarketingActivityDeliveryChanged(ctx context.Context, vals map[string][]string) (*entity.MarketingActivityDeliveryChangedReq, error) // 推广计划状态变更消息
 }
