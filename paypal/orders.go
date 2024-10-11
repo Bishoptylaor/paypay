@@ -53,7 +53,7 @@ func (c *Client) CreateOrder(ctx context.Context, pl paypay.Payload) (res *entit
 // ShowOrderDetails
 // 查看订单详情（Show order details）
 // 文档：https://developer.paypal.com/docs/api/orders/v2/#orders_get
-func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay.Payload) (res *entity.ShowOrderDetailsRes, err error) {
+func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, query paypay.Payload) (res *entity.ShowOrderDetailsRes, err error) {
 	method := ShowOrderDetails
 	if orderId == pkg.NULL {
 		return nil, pkg.ErrPaypalMissingOrderId
@@ -61,8 +61,8 @@ func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, pl paypay
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id":     orderId,
-		"params": pl.EncodeURLParams(),
-	}), nil, nil)
+		"params": query.EncodeURLParams(),
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
