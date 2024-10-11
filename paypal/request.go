@@ -39,7 +39,18 @@ import (
 type DoPayPalRequest func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error)
 
 func GetPayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+		// 可能需要对 get 请求中的 query 参数做相关校验，此时 pl 传入内容为 query 结构体
+		// query 结构体已经通过 urlGenerator 封装到了 url 上
+		if pl != nil {
+			err = paypay.ExecuteQueue(
+				// 校验 biz_content 参数规则
+				IntegrityCheck(ctx, c, uri),
+			)(pl)
+			if err != nil {
+				return nil, nil, err
+			}
+		}
 		return c.doPayPal(ctx, xhttp.Get(urlGenerator(uri)), "", nil)
 	}
 }

@@ -57,7 +57,7 @@ func (c *Client) ListInvoice(ctx context.Context, query paypay.Payload) (res *en
 	c.EmptyChecker = method.Checker
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +384,7 @@ func (c *Client) ListInvoiceTemplate(ctx context.Context, query paypay.Payload) 
 	c.EmptyChecker = method.Checker
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -53,13 +53,13 @@ func (c *Client) CreatePlan(ctx context.Context, pl paypay.Payload) (res *entity
 // ListPlans
 // 展示订阅计划（List plans）
 // 文档：https://developer.paypal.com/docs/api/subscriptions/v1/#plans_list
-func (c *Client) ListPlans(ctx context.Context, pl paypay.Payload) (res *entity.ListPlansRes, err error) {
+func (c *Client) ListPlans(ctx context.Context, query paypay.Payload) (res *entity.ListPlansRes, err error) {
 	method := ListPlans
 	c.EmptyChecker = method.Checker
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
-		"params": pl.EncodeURLParams(),
-	}), nil, nil)
+		"params": query.EncodeURLParams(),
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +384,7 @@ func (c *Client) CaptureAuthoriedPaymentOnSubscription(ctx context.Context, subs
 // ListTransactions4Subscription
 // 列出一个订阅的所有交易记录 (List transactions for subscription)
 // 文档：https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_transactions
-func (c *Client) ListTransactions4Subscription(ctx context.Context, subscriptionId string, pl paypay.Payload) (res *entity.ListTransactions4SubscriptionRes, err error) {
+func (c *Client) ListTransactions4Subscription(ctx context.Context, subscriptionId string, query paypay.Payload) (res *entity.ListTransactions4SubscriptionRes, err error) {
 	method := ListTransactions4Subscription
 	c.EmptyChecker = method.Checker
 	if subscriptionId == pkg.NULL {
@@ -393,8 +393,8 @@ func (c *Client) ListTransactions4Subscription(ctx context.Context, subscription
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-		"params":          pl.EncodeURLParams(),
-	}), pl, nil)
+		"params":          query.EncodeURLParams(),
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
