@@ -26,13 +26,18 @@ import (
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
-	"github.com/Bishoptylaor/paypay/pkg/xcrypto"
+	"crypto/md5"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/base"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/padding"
+	"github.com/Bishoptylaor/paypay/pkg/xutils"
+	"golang.org/x/crypto/pbkdf2"
+	"hash"
 )
 
-type CBCEncrypter struct{}
+type cbc struct{}
 
 // aesCBCEncrypt 加密 由key的长度决定是128, 192 还是 256
-func aesCBCEncrypt(_ context.Context, origData, key, iv []byte, pad xcrypto.Pad) ([]byte, error) {
+func aesCBCEncrypt(_ context.Context, origData, key, iv []byte, pad padding.Pad) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -49,7 +54,7 @@ func aesCBCEncrypt(_ context.Context, origData, key, iv []byte, pad xcrypto.Pad)
 }
 
 // aesCBCDecrypt 解密
-func aesCBCDecrypt(_ context.Context, encrypted, key, iv []byte, pad xcrypto.Pad) ([]byte, error) {
+func aesCBCDecrypt(_ context.Context, encrypted, key, iv []byte, pad padding.Pad) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -64,28 +69,28 @@ func aesCBCDecrypt(_ context.Context, encrypted, key, iv []byte, pad xcrypto.Pad
 	return origData, nil
 }
 
-// AESCBCEncrypt 普通加密
-func (CBCEncrypter) Encrypt(ctx context.Context, origData, key, iv []byte, pad xcrypto.Pad) ([]byte, error) {
+// Encrypt 普通加密
+func (cbc) Encrypt(ctx context.Context, origData, key, iv []byte, pad padding.Pad) ([]byte, error) {
 	return aesCBCEncrypt(ctx, origData, key, iv, pad)
 }
 
-// AESCBCEncryptWithBase64 加密 结果返回base64编码后的string
-func (CBCEncrypter) EncryptBase64(ctx context.Context, origData, key, iv []byte, pad xcrypto.Pad) (string, error) {
+// EncryptBase64 加密 结果返回base64编码后的string
+func (cbc) EncryptBase64(ctx context.Context, origData, key, iv []byte, pad padding.Pad) (string, error) {
 	bs, err := aesCBCEncrypt(ctx, origData, key, iv, pad)
 	if err != nil {
 		return "", err
 	}
-	return xcrypto.Base64.Encode(bs), nil
+	return base.Base64.Encode(bs), nil
 }
 
-// AESCBCDecrypt 普通解密
-func (CBCEncrypter) Decrypt(ctx context.Context, encrypted, key, iv []byte, pad xcrypto.Pad) ([]byte, error) {
+// Decrypt 普通解密
+func (cbc) Decrypt(ctx context.Context, encrypted, key, iv []byte, pad padding.Pad) ([]byte, error) {
 	return aesCBCDecrypt(ctx, encrypted, key, iv, pad)
 }
 
-// AESCBCDecryptWithBase64 base64编码后的加密串，返回原始数据
-func (CBCEncrypter) DecryptBase64(ctx context.Context, baseEncrypted, key, iv []byte, pad xcrypto.Pad) ([]byte, error) {
-	encrypted, err := xcrypto.Base64.Decode(string(baseEncrypted))
+// DecryptBase64 base64编码后的加密串，返回原始数据
+func (cbc) DecryptBase64(ctx context.Context, baseEncrypted, key, iv []byte, pad padding.Pad) ([]byte, error) {
+	encrypted, err := base.Base64.Decode(string(baseEncrypted))
 	if err != nil {
 		return []byte{}, err
 	}
@@ -94,4 +99,42 @@ func (CBCEncrypter) DecryptBase64(ctx context.Context, baseEncrypted, key, iv []
 		return []byte{}, err
 	}
 	return bs, nil
+}
+
+func (cbc) EncryptWithSalt(ctx context.Context, origData, key []byte, iter int, magic string, h func() hash.Hash, pad padding.Pad, f Cipher) ([]byte, error) {
+	if iter <= 0 {
+		iter = pkc5DefaultIter
+	}
+
+	if h == nil {
+		h = md5.New
+	}
+
+	var salt = xutils.RandomString(pkc5SaltLen)
+	var sKey = pbkdf2.Key(key, []byte(salt), iter, len(key), h)
+	var sIV = pbkdf2.Key(sKey, []byte(salt), iter, maxIvLen, h)
+
+	var encrypted, err = f(ctx, origData, sKey, sIV, pad)
+
+	encrypted = append([]byte(salt), encrypted...)
+	encrypted = append([]byte(magic), encrypted...)
+
+	return encrypted, err
+}
+
+func (cbc) DecryptWithSalt(ctx context.Context, encrypted, key []byte, iterCount int, magic string, h func() hash.Hash, pad padding.Pad, f Cipher) ([]byte, error) {
+	if iterCount <= 0 {
+		iterCount = pkc5DefaultIter
+	}
+
+	if h == nil {
+		h = md5.New
+	}
+
+	var salt = encrypted[len(magic) : len(magic)+pkc5SaltLen]
+	var sKey = pbkdf2.Key(key, salt, iterCount, len(key), h)
+	var sIV = pbkdf2.Key(sKey, salt, iterCount, maxIvLen, h)
+
+	var plaintext, err = f(ctx, encrypted[len(magic)+pkc5SaltLen:], sKey, sIV, pad)
+	return plaintext, err
 }
