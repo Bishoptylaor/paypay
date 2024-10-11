@@ -1,12 +1,11 @@
 package paypay
 
 import (
-	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"github.com/Bishoptylaor/paypay/pkg"
-	"github.com/Bishoptylaor/paypay/pkg/zutils"
+	"github.com/Bishoptylaor/paypay/pkg/xutils"
 	"io"
 	"net/url"
 	"sort"
@@ -30,16 +29,49 @@ type File struct {
 	Content []byte `json:"content"`
 }
 
-// Set 设置参数
-func (pl Payload) Set(key string, value any) Payload {
-	pl[key] = value
-	return pl
+type PayloadOption func(*PayloadOptions)
+type PayloadOptions struct {
+	optional *bool
 }
 
-func (pl Payload) SetPayload(key string, value func(b Payload)) Payload {
-	_pl := make(Payload)
-	value(_pl)
-	pl[key] = _pl
+func (opt PayloadOptions) SetOptional(optional bool) {
+	opt.optional = &optional
+}
+
+func mergePayloadOption(opts ...PayloadOptions) *PayloadOptions {
+	opt := &PayloadOptions{}
+	for _, o := range opts {
+		if o.optional != nil {
+			if *o.optional {
+				opt.optional = o.optional
+				return opt
+			}
+		}
+	}
+	return opt
+}
+
+// Set 设置参数
+func (pl Payload) Set(key string, value any, opts ...PayloadOptions) Payload {
+	opt := mergePayloadOption(opts...)
+	switch value.(type) {
+	case string:
+		if opt.optional != nil {
+			if *opt.optional {
+				if value != nil {
+					pl[key] = value
+				}
+			}
+		} else {
+			pl[key] = value
+		}
+	case func(payload Payload):
+		_pl := make(Payload)
+		value.(func(b Payload))(_pl)
+		pl[key] = _pl
+	default:
+		pl[key] = value
+	}
 	return pl
 }
 
@@ -65,13 +97,13 @@ func (pl Payload) GetString(key string) string {
 	}
 	v, ok := value.(string)
 	if !ok {
-		return zutils.ConvertToString(value)
+		return xutils.Any2String(value)
 	}
 	return v
 }
 
-// GetInterface 获取原始参数
-func (pl Payload) GetInterface(key string) any {
+// GetAny 获取原始参数
+func (pl Payload) GetAny(key string) any {
 	if pl == nil {
 		return nil
 	}
@@ -219,16 +251,23 @@ func (pl Payload) EncodeURLParams() string {
 	return buf.String()[:buf.Len()-1]
 }
 
-func (pl Payload) IntegrityCheck(ctx context.Context, rulers ...Ruler) error {
-	var ok bool
-	var err error
-	for _, ruler := range rulers {
-		ok, err = zutils.Expr(ctx, ruler.Rule, pl)
-		if !ok || err != nil {
-			return fmt.Errorf("[IntegrityCheck]: rule:[%s], err[%s], [%s]", ruler.Des, err, ruler.Alert)
+type ExecuteElem func(Payload) error
+
+// ExecuteQueue combine MakeMapEndpoint func
+func ExecuteQueue(queue ...ExecuteElem) ExecuteElem {
+	return func(pl Payload) error {
+		var errs []error
+		for _, e := range queue {
+			err := e(pl)
+			if err != nil {
+				errs = append(errs, err)
+			}
 		}
+		if len(errs) != 0 {
+			return fmt.Errorf("[ExecuteErrs]: %s", errs)
+		}
+		return nil
 	}
-	return nil
 }
 
 type PayloadRuler func(caller string) []Ruler
@@ -250,5 +289,15 @@ func NewRuler(des, rule, alert string) Ruler {
 func PreSetter(key, value string) PayloadPreSetter {
 	return func(pl Payload) {
 		pl.Set(key, value)
+	}
+}
+
+func InjectRuler(_map map[string][]Ruler) PayloadRuler {
+	return func(uri string) []Ruler {
+		if rulers, ok := _map[uri]; ok {
+			return rulers
+		} else {
+			return []Ruler{}
+		}
 	}
 }

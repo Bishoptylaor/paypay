@@ -10,6 +10,7 @@
 *.ipr
 *.iml
 *.iws
+*.sum
 
 # system ignore
 .DS_Store
@@ -23,3 +24,4 @@ Thumbs.db
 *.patch
 *.tmp
 main
+/paypal/assets/
