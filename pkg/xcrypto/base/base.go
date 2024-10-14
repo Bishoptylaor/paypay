@@ -2,7 +2,7 @@ package base
 
 import (
 	"encoding/base64"
-	"github.com/Bishoptylaor/paypay/pkg/xcrypto/base62"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/base/base62"
 	"github.com/Bishoptylaor/paypay/pkg/xutils"
 )
 

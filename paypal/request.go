@@ -36,10 +36,10 @@ import (
 	"net/url"
 )
 
-type DoPayPalRequest func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error)
+type DoPayPalRequest func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch, headers map[string]string) (res *http.Response, bs []byte, err error)
 
 func GetPayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch, headers map[string]string) (res *http.Response, bs []byte, err error) {
 		// 可能需要对 get 请求中的 query 参数做相关校验，此时 pl 传入内容为 query 结构体
 		// query 结构体已经通过 urlGenerator 封装到了 url 上
 		if pl != nil {
@@ -56,7 +56,7 @@ func GetPayPal(c *Client) DoPayPalRequest {
 }
 
 func PostPayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch, _ map[string]string) (res *http.Response, bs []byte, err error) {
 		err = paypay.ExecuteQueue(
 			// 校验 biz_content 参数规则
 			IntegrityCheck(ctx, c, uri),
@@ -68,8 +68,21 @@ func PostPayPal(c *Client) DoPayPalRequest {
 	}
 }
 
+func PostPayPalWithHeaders(c *Client) DoPayPalRequest {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch, headers map[string]string) (res *http.Response, bs []byte, err error) {
+		err = paypay.ExecuteQueue(
+			// 校验 biz_content 参数规则
+			IntegrityCheck(ctx, c, uri),
+		)(pl)
+		if err != nil {
+			return nil, nil, err
+		}
+		return c.doPayPal(ctx, xhttp.Post(urlGenerator(uri)), pl, headers)
+	}
+}
+
 func PutPayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch, _ map[string]string) (res *http.Response, bs []byte, err error) {
 		err = paypay.ExecuteQueue(
 			// 校验参数规则
 			IntegrityCheck(ctx, c, uri),
@@ -82,14 +95,14 @@ func PutPayPal(c *Client) DoPayPalRequest {
 }
 
 func PatchPayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, patches []*entity.Patch, _ map[string]string) (res *http.Response, bs []byte, err error) {
 		// data, _ := json.Marshal(patches)
 		return c.doPayPal(ctx, xhttp.Patch(urlGenerator(uri)), patches, nil)
 	}
 }
 
 func DeletePayPal(c *Client) DoPayPalRequest {
-	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, _ paypay.Payload, _ []*entity.Patch, _ map[string]string) (res *http.Response, bs []byte, err error) {
 		return c.doPayPal(ctx, xhttp.Delete(urlGenerator(uri)), "", nil)
 	}
 }

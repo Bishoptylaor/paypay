@@ -36,4 +36,5 @@ var (
 	ErrPaypalMissingPayoutItemId         = errors.New("paypal: missing payout item id")
 	ErrPaypalMissingSubscriptionId       = errors.New("paypal: missing subscription id")
 	ErrPaypalMissingPlanId               = errors.New("paypal: missing plan id")
+	ErrPaypalMissingProductId            = errors.New("paypal: missing product id")
 )
