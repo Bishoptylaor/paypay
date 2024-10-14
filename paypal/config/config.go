@@ -40,6 +40,7 @@ type Config struct {
 	Prod         bool   // 是否是正式环境，沙箱环境请选择新版沙箱应用信息。
 	ProxyProd    string // 代理 URL
 	ProxySandbox string // 代理 沙盒 URL
+	Headers      map[string]string
 }
 
 func (c Config) GenUrl(ctx context.Context, params interface{}) func(format string) string {

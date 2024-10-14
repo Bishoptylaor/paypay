@@ -37,7 +37,7 @@ func (c *Client) CreateBatchPayout(ctx context.Context, pl paypay.Payload) (res 
 	method := CreateBatchPayout
 	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *Client) ShowPayoutBatchDetail(ctx context.Context, batchId string, quer
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"payout_batch_id": batchId,
 		"params":          query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (c *Client) ShowPayoutItemDetail(ctx context.Context, payoutItemId string) 
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"payout_item_id": payoutItemId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func (c *Client) CancelUnclaimedPayoutItem(ctx context.Context, payoutItemId str
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"payout_item_id": payoutItemId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}

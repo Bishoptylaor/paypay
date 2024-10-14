@@ -2,6 +2,13 @@ package pkg
 
 import "errors"
 
+func WrapError(info string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return errors.New(info + ": " + err.Error())
+}
+
 var (
 	ErrUnmarshal       = errors.New("json unmarshal error")
 	ErrMissParam       = errors.New("miss param error")
@@ -37,4 +44,5 @@ var (
 	ErrPaypalMissingSubscriptionId       = errors.New("paypal: missing subscription id")
 	ErrPaypalMissingPlanId               = errors.New("paypal: missing plan id")
 	ErrPaypalMissingProductId            = errors.New("paypal: missing product id")
+	ErrPaypalMissingQueryId              = errors.New("paypal: missing query id")
 )

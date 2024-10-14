@@ -41,12 +41,17 @@ type Client struct {
 
 	// 操作组
 	operate.Operates
+
+	// to remember every setting from init. used when we need a temporary new client with tiny different settings
+	ops   []Settings
 	debug bool
 }
 
 // NewClient 初始化 Paypal 客户端
 func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error) {
-	client = &Client{}
+	client = &Client{
+		ops: make([]Settings, 0),
+	}
 	// 预设关键参数
 	// 默认关闭 debug
 	client.Use(Debug(pkg.DebugOff))
@@ -76,6 +81,7 @@ func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error)
 func (c *Client) Use(ops ...Settings) {
 	for _, op := range ops {
 		op(c)
+		c.ops = append(c.ops, op)
 	}
 }
 
@@ -93,13 +99,16 @@ func (c *Client) handleResponse(ctx context.Context, method Method, httpRes *htt
 		emptyRes.Error = string(bs)
 		emptyRes.ErrorResponse = new(entity.ErrorResponse)
 		if err := json.Unmarshal(bs, emptyRes.ErrorResponse); err != nil {
-			return pkg.ErrUnmarshal
+			return pkg.WrapError("[handleResponse] wrong status code unmarshal err: ", err)
 		}
+		return nil
+	}
+	if response == nil || method.ValidStatusCode == http.StatusNoContent {
 		return nil
 	}
 
 	if err := json.Unmarshal(bs, response); err != nil {
-		return pkg.ErrUnmarshal
+		return pkg.WrapError("[handleResponse] response unmarshal err: ", err)
 	}
 	return nil
 }

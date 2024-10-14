@@ -101,6 +101,27 @@ func Proxy(prod, sandbox string) Settings {
 	}
 }
 
+func Headers(headers map[string]string) Settings {
+	return func(client *Client) {
+		if client.Headers == nil {
+			client.Headers = headers
+		} else {
+			for k, v := range headers {
+				client.Headers[k] = v
+			}
+		}
+	}
+}
+
+func DefaultHeaders() Settings {
+	return Headers(map[string]string{
+		// representation || minimal ; minimal by default
+		"Prefer": "minimal",
+		// used for identifies a merchant. you can change it with the client.Use function
+		// "PayPal-Auth-Assertion": "",
+	})
+}
+
 // NewSettings 标准初始化配置
 func NewSettings(ins ...Settings) []Settings {
 	return append(
@@ -109,6 +130,7 @@ func NewSettings(ins ...Settings) []Settings {
 			DefaultLogger(),  // 设置 logger
 			DefaultHClient(), // 设置 Http client
 			DefaultChecker(), // 设置 checker 初始化
+			DefaultHeaders(), // 设置 header 自定义部分
 		), ins...,
 	)
 }

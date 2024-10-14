@@ -37,7 +37,7 @@ func (c *Client) CreateOrder(ctx context.Context, pl paypay.Payload) (res *entit
 	method := CreateOrder
 	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *Client) ShowOrderDetails(ctx context.Context, orderId string, query pay
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id":     orderId,
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -89,13 +89,13 @@ func (c *Client) UpdateOrder(ctx context.Context, orderId string, patches []*ent
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), nil, patches, nil)
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdateOrderRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -113,7 +113,7 @@ func (c *Client) ConfirmOrder(ctx context.Context, orderId string, pl paypay.Pay
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (c *Client) AuthorizeOrder(ctx context.Context, orderId string, pl paypay.P
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (c *Client) CaptureOrder(ctx context.Context, orderId string, pl paypay.Pay
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func (c *Client) AddTrackerForOrder(ctx context.Context, orderId string, pl payp
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id": orderId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -216,13 +216,13 @@ func (c *Client) TrackersOfOrder(ctx context.Context, orderId, trackerId string,
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"id":         orderId,
 		"tracker_id": trackerId,
-	}), nil, patches, nil)
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.TrackersOfOrderRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil

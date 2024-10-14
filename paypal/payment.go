@@ -41,7 +41,7 @@ func (c *Client) ShowAuthorizedPaymentDetails(ctx context.Context, authorization
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"authorization_id": authorizationId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *Client) CaptureAuthorizedPayment(ctx context.Context, authorizationId s
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"authorization_id": authorizationId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (c *Client) ReauthorizePayment(ctx context.Context, authorizationId string,
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"authorization_id": authorizationId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -113,13 +113,13 @@ func (c *Client) VoidAuthorizePayment(ctx context.Context, authorizationId strin
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"authorization_id": authorizationId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.VoidAuthorizePaymentRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -136,7 +136,7 @@ func (c *Client) ShowCapturedPayment(ctx context.Context, captureId string) (res
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"capture_id": captureId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func (c *Client) RefundCapturedPayment(ctx context.Context, captureId string, pl
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"capture_id": captureId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,7 @@ func (c *Client) ShowRefundDetails(ctx context.Context, refundId string) (res *e
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"refund_id": refundId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -33,11 +33,11 @@ import (
 // CreateProduct
 // 创建目录商品（Create product）
 // 文档：https://developer.paypal.com/docs/api/catalog-products/v1/#products_create
-func (c *Client) CreateProduct(ctx context.Context, pl paypay.Payload, headers map[string]string) (res *entity.CreateProductRes, err error) {
+func (c *Client) CreateProduct(ctx context.Context, pl paypay.Payload) (res *entity.CreateProductRes, err error) {
 	method := CreateProduct
 	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, headers)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) ListProducts(ctx context.Context, query paypay.Payload) (res *e
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *Client) ShowProductDetails(ctx context.Context, productId string) (res 
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"product_id": productId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (c *Client) ShowProductDetails(ctx context.Context, productId string) (res 
 // UpdateProduct
 // 更新订单（Update product）
 // 文档：https://developer.paypal.com/docs/api/catalog-products/v1/#products_patch
-func (c *Client) UpdateProduct(ctx context.Context, productId string, pl paypay.Payload) (res *entity.UpdateProductRes, err error) {
+func (c *Client) UpdateProduct(ctx context.Context, productId string, patches []*entity.Patch) (res *entity.UpdateProductRes, err error) {
 	method := UpdateProduct
 	if productId == pkg.NULL {
 		return nil, pkg.ErrPaypalMissingProductId
@@ -106,14 +106,14 @@ func (c *Client) UpdateProduct(ctx context.Context, productId string, pl paypay.
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"product_id": productId,
-	}), pl, nil, nil)
+	}), nil, patches)
 	if err != nil {
-		return nil, err
+		return nil, pkg.WrapError("[UpdateProduct] do method: ", err)
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdateProductRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
-		return res, err
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
+		return res, pkg.WrapError("[UpdateProduct]: ", err)
 	}
 	return res, nil
 }
