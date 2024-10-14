@@ -499,6 +499,40 @@ var (
 	}
 )
 
+// Catalog Products 目录商品
+var (
+	// CreateProduct 创建商品 POST
+	CreateProduct Method = Method{
+		Uri:             "/v1/catalogs/products",
+		ValidStatusCode: http.StatusCreated,
+		Do:              PostPayPalWithHeaders,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/catalogs/products": []paypay.Ruler{
+				paypay.NewRuler("name", `name != nil`, "产品名不为空"),
+				paypay.NewRuler("type", `type != nil && type in ["PHYSICAL", "DIGITAL", "SERVICE"]`, "产品类型不为空，取值范围：[PHYSICAL, DIGITAL, SERVICE]"),
+			},
+		}),
+	}
+	// ListProducts 商品列表 GET
+	ListProducts Method = Method{
+		Uri:             "/v1/catalogs/products",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// ShowProductDetails product_id 获取商品详情 GET
+	ShowProductDetails Method = Method{
+		Uri:             "/v1/catalogs/products/{{.product_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// UpdateProduct product_id 更新商品 PATCH
+	UpdateProduct Method = Method{
+		Uri:             "/v1/catalogs/products/{{.product_id}}",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PatchPayPal,
+	}
+)
+
 var EmptyMethod Method = Method{
 	Uri:             "",
 	ValidStatusCode: http.StatusOK,
