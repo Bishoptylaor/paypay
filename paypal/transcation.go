@@ -38,7 +38,7 @@ func (c *Client) ListTranscations(ctx context.Context, query paypay.Payload) (re
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (c *Client) ListAllBalances(ctx context.Context, query paypay.Payload) (res
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}

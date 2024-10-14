@@ -36,7 +36,7 @@ import (
 func (c *Client) CreateInvoice(ctx context.Context, pl paypay.Payload) (res *entity.CreateInvoiceRes, err error) {
 	method := CreateInvoices
 	c.EmptyChecker = method.Checker
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *Client) ListInvoice(ctx context.Context, query paypay.Payload) (res *en
 	c.EmptyChecker = method.Checker
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (c *Client) SendInvoice(ctx context.Context, invoiceId string, pl paypay.Pa
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (c *Client) SendInvoiceReminder(ctx context.Context, invoiceId string, pl p
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (c *Client) CancelSentInvoice(ctx context.Context, invoiceId string, pl pay
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ func (c *Client) RecordPaymentForInvoice(ctx context.Context, invoiceId string, 
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (c *Client) DeleteExternalPayment(ctx context.Context, invoiceId, transacti
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id":     invoiceId,
 		"transaction_id": transactionId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (c *Client) RecordRefundForInvoice(ctx context.Context, invoiceId string, p
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func (c *Client) DeleteExternalRefund(ctx context.Context, invoiceId, transactio
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id":     invoiceId,
 		"transaction_id": transactionId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ func (c *Client) GenerateInvoiceQRCode(ctx context.Context, invoiceId string, pl
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (c *Client) GenerateInvoiceQRCode(ctx context.Context, invoiceId string, pl
 func (c *Client) GenerateInvoiceNumber(ctx context.Context, pl paypay.Payload) (res *entity.GenerateInvoiceNumberRes, err error) {
 	method := GenerateInvoiceNumber
 	c.EmptyChecker = method.Checker
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{}), nil, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +293,7 @@ func (c *Client) ShowInvoiceDetail(ctx context.Context, invoiceId string, pl pay
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -318,7 +318,7 @@ func (c *Client) FullyUpdateInvoice(ctx context.Context, invoiceId string, query
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
 		"params":     query.EncodeURLParams(),
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +343,7 @@ func (c *Client) DeleteInvoice(ctx context.Context, invoiceId string) (res *enti
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"invoice_id": invoiceId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func (c *Client) SearchInvoice(ctx context.Context, query, pl paypay.Payload) (r
 	c.EmptyChecker = method.Checker
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +384,7 @@ func (c *Client) ListInvoiceTemplate(ctx context.Context, query paypay.Payload) 
 	c.EmptyChecker = method.Checker
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -403,7 +403,7 @@ func (c *Client) ListInvoiceTemplate(ctx context.Context, query paypay.Payload) 
 func (c *Client) CreateInvoiceTemplate(ctx context.Context, pl paypay.Payload) (res *entity.CreateInvoiceTemplateRes, err error) {
 	method := CreateInvoiceTemplate
 	c.EmptyChecker = method.Checker
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -427,7 +427,7 @@ func (c *Client) ShowTemplateDetails(ctx context.Context, templateId string, _ p
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"template_id": templateId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -451,7 +451,7 @@ func (c *Client) FullyUpdateInvoiceTemplate(ctx context.Context, templateId stri
 	}
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"template_id": templateId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -476,7 +476,7 @@ func (c *Client) DeleteInvoiceTemplate(ctx context.Context, templateId string) (
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"template_id": templateId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}

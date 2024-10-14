@@ -24,6 +24,8 @@ package main
 
 import (
 	"context"
+	"github.com/Bishoptylaor/paypay/examples/paypal/orders"
+	"github.com/Bishoptylaor/paypay/examples/paypal/products"
 	"github.com/Bishoptylaor/paypay/paypal"
 	"github.com/Bishoptylaor/paypay/pkg/xlog"
 )
@@ -47,6 +49,29 @@ func init() {
 }
 
 func main() {
-	RunOrderExamples()
+	// RunOrderExamples()
 	// RunInvoiceExamples()
+	RunProductsExamples()
+}
+
+func RunProductsExamples() {
+	products.CreateProduct(ctx, client)
+	// products.ListProducts(ctx, client)
+	// products.ShowProductDetails(ctx, client)
+
+	// products.UpdateProduct(ctx, client)
+	// products.ListProducts(ctx, client)
+}
+
+func RunOrderExamples() {
+	// CreateOrder(ctx, client)
+	orders.ShowOrderDetails(ctx, client)
+	// UpdateOrder(ctx, client)
+	// ConfirmOrder(ctx, client)
+	// 登录支付
+	// AuthorizeOrder(ctx, client)
+}
+
+func SingleCallUsage() {
+
 }
