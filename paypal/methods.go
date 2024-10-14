@@ -505,11 +505,13 @@ var (
 	CreateProduct Method = Method{
 		Uri:             "/v1/catalogs/products",
 		ValidStatusCode: http.StatusCreated,
-		Do:              PostPayPalWithHeaders,
+		Do:              PostPayPal,
 		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
 			"/v1/catalogs/products": []paypay.Ruler{
 				paypay.NewRuler("name", `name != nil`, "产品名不为空"),
-				paypay.NewRuler("type", `type != nil && type in ["PHYSICAL", "DIGITAL", "SERVICE"]`, "产品类型不为空，取值范围：[PHYSICAL, DIGITAL, SERVICE]"),
+				// paypay.NewRuler("type",
+				// 	`type in ["PHYSICAL", "DIGITAL", "SERVICE"]`,
+				// 	"产品类型不为空，取值范围：[PHYSICAL, DIGITAL, SERVICE]"),
 			},
 		}),
 	}

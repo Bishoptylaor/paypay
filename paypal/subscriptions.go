@@ -37,7 +37,7 @@ func (c *Client) CreatePlan(ctx context.Context, pl paypay.Payload) (res *entity
 	method := CreatePlan
 	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (c *Client) ListPlans(ctx context.Context, query paypay.Payload) (res *enti
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"params": query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (c *Client) ShowPlanDetails(ctx context.Context, planId string) (res *entit
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"plan_id": planId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -110,13 +110,13 @@ func (c *Client) UpdatePlan(ctx context.Context, planId string, patches []*entit
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"plan_id": planId,
-	}), nil, patches, nil)
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdatePlanRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -133,13 +133,13 @@ func (c *Client) ActivePlan(ctx context.Context, planId string) (res *entity.Act
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"plan_id": planId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.ActivePlanRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -156,13 +156,13 @@ func (c *Client) DeactivePlan(ctx context.Context, planId string) (res *entity.D
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"plan_id": planId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.DeactivePlanRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -179,13 +179,13 @@ func (c *Client) UpdatePricing(ctx context.Context, planId string) (res *entity.
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"plan_id": planId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdatePricingRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -198,7 +198,7 @@ func (c *Client) CreateSubscription(ctx context.Context, pl paypay.Payload) (res
 	method := CreatePlan
 	c.EmptyChecker = method.Checker
 
-	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil, nil)
+	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, nil), pl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +222,7 @@ func (c *Client) ShowSubscriptionDetails(ctx context.Context, subscriptionId str
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -249,13 +249,13 @@ func (c *Client) UpdateSubscription(ctx context.Context, subscriptionId string, 
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), nil, patches, nil)
+	}), nil, patches)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdateSubscriptionRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -272,7 +272,7 @@ func (c *Client) RevisePlanOrQuantityOfSubsription(ctx context.Context, subscrip
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), nil, nil, nil)
+	}), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -297,13 +297,13 @@ func (c *Client) SuspendSubscription(ctx context.Context, subscriptionId string,
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.SuspendSubscriptionRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -321,13 +321,13 @@ func (c *Client) CancelSubscription(ctx context.Context, subscriptionId string, 
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.CancelSubscriptionRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -345,13 +345,13 @@ func (c *Client) ActivateSubscription(ctx context.Context, subscriptionId string
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.ActivateSubscriptionRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -369,13 +369,13 @@ func (c *Client) CaptureAuthoriedPaymentOnSubscription(ctx context.Context, subs
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
-	}), pl, nil, nil)
+	}), pl, nil)
 	if err != nil {
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.CaptureAuthoriedPaymentOnSubscriptionRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -394,7 +394,7 @@ func (c *Client) ListTransactions4Subscription(ctx context.Context, subscription
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
 		"subscription_id": subscriptionId,
 		"params":          query.EncodeURLParams(),
-	}), query, nil, nil)
+	}), query, nil)
 	if err != nil {
 		return nil, err
 	}
