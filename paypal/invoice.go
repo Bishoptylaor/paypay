@@ -87,7 +87,7 @@ func (c *Client) SendInvoice(ctx context.Context, invoiceId string, pl paypay.Pa
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.SendInvoiceRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -110,7 +110,7 @@ func (c *Client) SendInvoiceReminder(ctx context.Context, invoiceId string, pl p
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.SendInvoiceReminderRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -133,7 +133,7 @@ func (c *Client) CancelSentInvoice(ctx context.Context, invoiceId string, pl pay
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.CancelSentInvoiceRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -182,7 +182,7 @@ func (c *Client) DeleteExternalPayment(ctx context.Context, invoiceId, transacti
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.DeleteExternalPaymentRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -232,7 +232,7 @@ func (c *Client) DeleteExternalRefund(ctx context.Context, invoiceId, transactio
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.DeleteExternalRefundRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -349,7 +349,7 @@ func (c *Client) DeleteInvoice(ctx context.Context, invoiceId string) (res *enti
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.DeleteInvoiceRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil
@@ -482,7 +482,7 @@ func (c *Client) DeleteInvoiceTemplate(ctx context.Context, templateId string) (
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.DeleteInvoiceTemplateRes{EmptyRes: emptyRes}
-	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, new(struct{})); err != nil {
+	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
 		return res, err
 	}
 	return res, nil

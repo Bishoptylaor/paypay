@@ -194,6 +194,12 @@ func Req(formType string) CfgOp {
 	}
 }
 
+func Reader(reader func(any) (io.Reader, error)) CfgOp {
+	return func(c *httpConfig) {
+		c.reader = reader
+	}
+}
+
 func Res(formType string) CfgOp {
 	return func(c *httpConfig) {
 		c.loader = _ResContentTypeLoader[formType]

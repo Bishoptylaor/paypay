@@ -26,6 +26,7 @@ import (
 	"context"
 	"github.com/Bishoptylaor/paypay/examples/paypal/orders"
 	"github.com/Bishoptylaor/paypay/examples/paypal/products"
+	"github.com/Bishoptylaor/paypay/examples/paypal/singlecall"
 	"github.com/Bishoptylaor/paypay/paypal"
 	"github.com/Bishoptylaor/paypay/pkg/xlog"
 )
@@ -51,12 +52,13 @@ func init() {
 func main() {
 	// RunOrderExamples()
 	// RunInvoiceExamples()
-	RunProductsExamples()
+	// RunProductsExamples()
+	SingleCallUsage()
 }
 
 func RunProductsExamples() {
-	products.CreateProduct(ctx, client)
-	// products.ListProducts(ctx, client)
+	// products.CreateProduct(ctx, client)
+	products.ListProducts(ctx, client)
 	// products.ShowProductDetails(ctx, client)
 
 	// products.UpdateProduct(ctx, client)
@@ -73,5 +75,5 @@ func RunOrderExamples() {
 }
 
 func SingleCallUsage() {
-
+	singlecall.ListProducts(ctx, client)
 }
