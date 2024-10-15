@@ -535,8 +535,96 @@ var (
 	}
 )
 
+// Disputes 投诉 || 争议
+var (
+	// EscalateDisputeToClaim dispute_id 将投诉升级为索赔 POST
+	EscalateDisputeToClaim Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/escalate",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/customer/disputes/{{.dispute_id}}/escalate": []paypay.Ruler{
+				paypay.NewRuler("note", `note != nil`, "note 不为空"),
+			},
+		}),
+	}
+	// AcceptOffer2Resolve dispute_id 客户接受商家的解决方案，结束争议 POST
+	AcceptOffer2Resolve Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/accept-offer",
+		ValidStatusCode: http.StatusAccepted,
+		Do:              PostPayPal,
+	}
+	// ListDisputes 获取争议列表 GET
+	ListDisputes Method = Method{
+		Uri:             "/v1/customer/disputes?{{.params}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// ProvideInfo4Dispute dispute_id 提供有效信息 POST
+	ProvideInfo4Dispute Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/provide-supporting-info",
+		ValidStatusCode: http.StatusOK,
+		Do:              EmptyPaypal,
+	}
+	// ShowDisputeDetails dispute_id 获取争议详情 GET
+	ShowDisputeDetails Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}",
+		ValidStatusCode: http.StatusOK,
+		Do:              GetPayPal,
+	}
+	// PartiallyUpdateDispute dispute_id 部分更新 POST
+	PartiallyUpdateDispute Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}",
+		ValidStatusCode: http.StatusNoContent,
+		Do:              PatchPayPal,
+	}
+	// DenyOffer2Resolve dispute_id 拒绝方案 POST
+	DenyOffer2Resolve Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/deny-offer",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+	}
+	// MakeOffer2Resolve dispute_id 发起一个解决方案 POST
+	MakeOffer2Resolve Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/make-offer",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+	}
+	// AppealDispute dispute_id 上诉 POST
+	AppealDispute Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/appeal",
+		ValidStatusCode: http.StatusOK,
+		Do:              EmptyPaypal,
+	}
+	ProvideEvidence Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/provide-evidence",
+		ValidStatusCode: http.StatusOK,
+		Do:              EmptyPaypal,
+	}
+	AckReturnedItem Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/acknowledge-return-item",
+		ValidStatusCode: http.StatusOK,
+		Do:              EmptyPaypal,
+	}
+	NotifyDispute2ThirdParty Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/send-message",
+		ValidStatusCode: http.StatusOK,
+		Do:              EmptyPaypal,
+	}
+	AcceptClaim Method = Method{
+		Uri:             "/v1/customer/disputes/{{.dispute_id}}/accept-claim",
+		ValidStatusCode: http.StatusOK,
+		Do:              PostPayPal,
+		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
+			"/v1/customer/disputes/{{.dispute_id}}/accept-claim": []paypay.Ruler{
+				paypay.NewRuler("note", `note != nil`, "note 不为空"),
+			},
+		}),
+	}
+)
+
 var EmptyMethod Method = Method{
 	Uri:             "",
 	ValidStatusCode: http.StatusOK,
-	Do:              PostPayPal,
+	Do:              EmptyPaypal,
 }

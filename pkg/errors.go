@@ -30,6 +30,8 @@ var (
 )
 
 var (
+	ErrPaypalFunctionNotImplemented = errors.New("paypal: function not implemented yet")
+
 	ErrPaypalNothingToChange             = errors.New("paypal: nothing to change")
 	ErrPaypalMissingOrderId              = errors.New("paypal: missing order id")
 	ErrPaypalMissingInvoiceId            = errors.New("paypal: missing invoice id")
@@ -45,4 +47,5 @@ var (
 	ErrPaypalMissingPlanId               = errors.New("paypal: missing plan id")
 	ErrPaypalMissingProductId            = errors.New("paypal: missing product id")
 	ErrPaypalMissingQueryId              = errors.New("paypal: missing query id")
+	ErrPaypalMissingDisputeId            = errors.New("paypal: missing dispute id")
 )

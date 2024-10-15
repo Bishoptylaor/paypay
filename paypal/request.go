@@ -38,6 +38,12 @@ import (
 
 type DoPayPalRequest func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error)
 
+func EmptyPaypal(c *Client) DoPayPalRequest {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error) {
+		return nil, nil, pkg.ErrPaypalFunctionNotImplemented
+	}
+}
+
 func GetPayPal(c *Client) DoPayPalRequest {
 	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, _ []*entity.Patch) (res *http.Response, bs []byte, err error) {
 		// 可能需要对 get 请求中的 query 参数做相关校验，此时 pl 传入内容为 query 结构体
@@ -94,18 +100,29 @@ func DeletePayPal(c *Client) DoPayPalRequest {
 	}
 }
 
-func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any) (res *http.Response, bs []byte, err error) {
-	res, bs, err = c.HClient.CallOp(ctx, data,
-		xhttp.Req(xhttp.TypeJSON), // default json
-		op,
-		xhttp.Header(map[string]string{
-			"Accept":                   "*/*",
-			consts.HeaderAuthorization: consts.AuthorizationPrefixBearer + c.AccessToken,
-		}),
-		xhttp.Header(c.headers),
-		xhttp.Prefix(PPReqPrefix(c.debug, c.Logger)),
-		xhttp.Suffix(PPResSuffix(c.debug, c.Logger)),
-	)
+func UploadFilePaypal(c *Client, files map[string]paypay.File, ops ...xhttp.CfgOp) DoPayPalRequest {
+	return func(ctx context.Context, uri string, urlGenerator func(string) string, pl paypay.Payload, patches []*entity.Patch) (res *http.Response, bs []byte, err error) {
+		for k, f := range files {
+			pl.Set(k, f)
+		}
+		return c.doPayPal(ctx, xhttp.Post(urlGenerator(uri)), pl, ops...)
+	}
+}
+
+func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any, ops ...xhttp.CfgOp) (res *http.Response, bs []byte, err error) {
+	// default json
+	c.HClient.Use(xhttp.Req(xhttp.TypeJSON))
+	c.HClient.Use(op)
+	c.HClient.Use(xhttp.Header(map[string]string{
+		"Accept":                   "*/*",
+		consts.HeaderAuthorization: consts.AuthorizationPrefixBearer + c.AccessToken,
+	}))
+	c.HClient.Use(xhttp.Header(c.Headers))
+	c.HClient.Use(xhttp.Prefix(PPReqPrefix(c.debug, c.Logger)))
+	c.HClient.Use(xhttp.Suffix(PPResSuffix(c.debug, c.Logger)))
+
+	// use custom xhttp ops
+	res, bs, err = c.HClient.CallOp(ctx, data, ops...)
 	if err != nil {
 		return nil, nil, err
 	}

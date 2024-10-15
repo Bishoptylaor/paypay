@@ -8,6 +8,7 @@ const (
 	TypeXML               = "xml"
 	TypeFormData          = "form-data"
 	TypeMultipartFormData = "multipart-form-data"
+	// TypeMultipartRelated  = "multipart-related"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 		TypeXML:               "application/xml",
 		TypeFormData:          "application/x-www-form-urlencoded",
 		TypeMultipartFormData: "multipart/form-data",
+		// TypeMultipartRelated:  "multipart/related",
 	}
 
 	_ResContentTypeMap = map[string]string{

@@ -45,7 +45,7 @@ func CreateProduct(ctx context.Context, client *paypal.Client) {
 	res := new(entity.CreateProductRes)
 	res.Response = new(entity.ProductDetail)
 	err := client.CustomSingleCall(ctx, paypal.CreateProduct,
-		func() (string, string) { return "", "" },
+		func() map[string]string { return map[string]string{} },
 		pl,
 		nil,
 		nil,

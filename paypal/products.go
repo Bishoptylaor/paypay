@@ -96,7 +96,7 @@ func (c *Client) ShowProductDetails(ctx context.Context, productId string) (res 
 }
 
 // UpdateProduct
-// 更新订单（Update product）
+// 更新商品（Update product）
 // 文档：https://developer.paypal.com/docs/api/catalog-products/v1/#products_patch
 func (c *Client) UpdateProduct(ctx context.Context, productId string, patches []*entity.Patch) (res *entity.UpdateProductRes, err error) {
 	method := UpdateProduct
