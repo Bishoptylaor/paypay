@@ -29,7 +29,6 @@ import (
 	"github.com/Bishoptylaor/paypay/examples"
 	"github.com/Bishoptylaor/paypay/paypal"
 	"github.com/Bishoptylaor/paypay/paypal/consts"
-	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg/xlog"
 )
 
@@ -42,19 +41,7 @@ func CreateProduct(ctx context.Context, client *paypal.Client) {
 		Set("image_url", "https://example.com/streaming.jpg").
 		Set("home_url", "https://example.com/home")
 
-	res := new(entity.CreateProductRes)
-	res.Response = new(entity.ProductDetail)
-	err := client.CustomSingleCall(ctx, paypal.CreateProduct,
-		func() map[string]string { return map[string]string{} },
-		pl,
-		nil,
-		nil,
-		res,
-		res.Response,
-		paypal.Headers(map[string]string{
-			"Prefer": "return=representation",
-		}),
-	)
+	res, err := client.CreateProduct(ctx, pl)
 	if err != nil {
 		xlog.Error(err)
 		return

@@ -28,6 +28,7 @@ import (
 	"github.com/Bishoptylaor/paypay/paypal/consts"
 	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg"
+	"github.com/pkg/errors"
 )
 
 // CreateProduct
@@ -108,12 +109,12 @@ func (c *Client) UpdateProduct(ctx context.Context, productId string, patches []
 		"product_id": productId,
 	}), nil, patches)
 	if err != nil {
-		return nil, pkg.WrapError("[UpdateProduct] do method: ", err)
+		return nil, errors.Wrap(err, "[UpdateProduct] do method")
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.UpdateProductRes{EmptyRes: emptyRes}
 	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
-		return res, pkg.WrapError("[UpdateProduct]: ", err)
+		return res, errors.Wrap(err, "[UpdateProduct]")
 	}
 	return res, nil
 }

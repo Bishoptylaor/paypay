@@ -29,11 +29,11 @@ import (
 	"github.com/Bishoptylaor/paypay/paypal/entity"
 )
 
-// ListTranscations
+// ListTransactions
 // 交易列表 (List transactions)
 // 文档：https://developer.paypal.com/docs/api/transaction-search/v1/#search_get
-func (c *Client) ListTranscations(ctx context.Context, query paypay.Payload) (res *entity.ListTranscationsRes, err error) {
-	method := ListTranscations
+func (c *Client) ListTransactions(ctx context.Context, query paypay.Payload) (res *entity.ListTransactionsRes, err error) {
+	method := ListTransactions
 	c.EmptyChecker = method.Checker
 
 	httpRes, bs, err := method.Do(c)(ctx, method.Uri, c.GenUrl(ctx, map[string]string{
@@ -43,8 +43,8 @@ func (c *Client) ListTranscations(ctx context.Context, query paypay.Payload) (re
 		return nil, err
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
-	res = &entity.ListTranscationsRes{EmptyRes: emptyRes}
-	res.Response = new(entity.TranscationInfos)
+	res = &entity.ListTransactionsRes{EmptyRes: emptyRes}
+	res.Response = new(entity.TransactionInfos)
 	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, res.Response); err != nil {
 		return res, err
 	}
