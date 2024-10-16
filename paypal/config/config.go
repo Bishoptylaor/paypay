@@ -43,7 +43,7 @@ type Config struct {
 	Headers      map[string]string
 }
 
-func (c Config) GenUrl(ctx context.Context, params interface{}) func(format string) string {
+func (c Config) GenUrl(ctx context.Context, params map[string]string) func(format string) string {
 	return func(format string) string {
 		fun := "BuildUri -->"
 		b := &bytes.Buffer{}

@@ -22,9 +22,9 @@
 
 package entity
 
-type ListTranscationsRes struct {
+type ListTransactionsRes struct {
 	EmptyRes
-	Response *TranscationInfos `json:"response,omitempty"`
+	Response *TransactionInfos `json:"response,omitempty"`
 }
 
 type ListAllBalancesRes struct {
@@ -55,8 +55,8 @@ type Balance struct {
 	WithheldBalance  *V1Amount `json:"withheld_balance,omitempty"`
 }
 
-type TranscationInfos struct {
-	TranscationDetails    []*TranscationDetail `json:"transcation_details,omitempty"`
+type TransactionInfos struct {
+	TransactionDetails    []*TransactionDetail `json:"transaction_details,omitempty"`
 	AccountNumber         string               `json:"account_number,omitempty"`
 	Page                  int                  `json:"page,omitempty"`
 	TotalItems            int                  `json:"total_items,omitempty"`
@@ -67,8 +67,8 @@ type TranscationInfos struct {
 	LastRefreshedDatetime string               `json:"last_refreshed_datetime,omitempty"`
 }
 
-type TranscationDetail struct {
-	TransactionInfo *Transcation    `json:"transaction_info,omitempty"`
+type TransactionDetail struct {
+	TransactionInfo *Transaction    `json:"transaction_info,omitempty"`
 	PayerInfo       *PayerInfo      `json:"payer_info,omitempty"`
 	ShippingInfo    *V1ShippingInfo `json:"shipping_info,omitempty"`
 	CartInfo        *CartInfo       `json:"cart_info,omitempty"`
@@ -133,27 +133,27 @@ type CheckoutOption struct {
 	CheckoutOptionValue string `json:"checkout_option_value,omitempty"`
 }
 
-type Transcation struct {
+type Transaction struct {
 	PaypalAccountId           string    `json:"paypal_account_id,omitempty"`
-	TranscationId             string    `json:"transcation_id,omitempty"`
+	TransactionId             string    `json:"transaction_id,omitempty"`
 	PaypalReferenceId         string    `json:"paypal_reference_id,omitempty"`
 	PaypalReferenceIdType     string    `json:"paypal_reference_id_type,omitempty"`
-	TranscationEventCode      string    `json:"transcation_event_code,omitempty"`
-	TranscationStatus         string    `json:"transcation_status,omitempty"`
-	TranscationSubject        string    `json:"transcation_subject,omitempty"`
-	TranscationNote           string    `json:"transcation_note,omitempty"`
+	TransactionEventCode      string    `json:"transaction_event_code,omitempty"`
+	TransactionStatus         string    `json:"transaction_status,omitempty"`
+	TransactionSubject        string    `json:"transaction_subject,omitempty"`
+	TransactionNote           string    `json:"transaction_note,omitempty"`
 	PaymentTrackingId         string    `json:"payment_tracking_id,omitempty"`
 	BankReferenceId           string    `json:"bank_reference_id,omitempty"`
 	InvoiceId                 string    `json:"invoice_id,omitempty"`
-	CustomeField              string    `json:"custome_field,omitempty"`
+	CustomField               string    `json:"custom_field,omitempty"`
 	ProtectionEligibility     string    `json:"protection_eligibility,omitempty"`
 	CreditTerm                string    `json:"credit_term,omitempty"`
 	PaymentMethodType         string    `json:"payment_method_type,omitempty"`
 	InstrumentType            string    `json:"instrument_type,omitempty"`
 	InstrumentSubType         string    `json:"instrument_sub_type,omitempty"`
-	TranscationInitiationDate string    `json:"transaction_initiation_date,omitempty"`
-	TranscationUpdatedDate    string    `json:"transcation_updated_date,omitempty"`
-	TranscationAmount         *V1Amount `json:"transcation_amount,omitempty"`
+	TransactionInitiationDate string    `json:"transaction_initiation_date,omitempty"`
+	TransactionUpdatedDate    string    `json:"transaction_updated_date,omitempty"`
+	TransactionAmount         *V1Amount `json:"transaction_amount,omitempty"`
 	FeeAmount                 *V1Amount `json:"fee_amount,omitempty"`
 	DiscountAmount            *V1Amount `json:"discount_amount,omitempty"`
 	InsuranceAmount           *V1Amount `json:"insurance_amount,omitempty"`
