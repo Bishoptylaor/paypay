@@ -118,8 +118,8 @@ func (c *Client) doPayPal(ctx context.Context, op xhttp.CfgOp, data any, ops ...
 		consts.HeaderAuthorization: consts.AuthorizationPrefixBearer + c.AccessToken,
 	}))
 	c.HClient.Use(xhttp.Header(c.Headers))
-	c.HClient.Use(xhttp.Prefix(PPReqPrefix(c.debug, c.Logger)))
-	c.HClient.Use(xhttp.Suffix(PPResSuffix(c.debug, c.Logger)))
+	c.HClient.Use(xhttp.Prefix(c.PrefixFunc...))
+	c.HClient.Use(xhttp.Suffix(c.SuffixFunc...))
 
 	// use custom xhttp ops
 	res, bs, err = c.HClient.CallOp(ctx, data, ops...)

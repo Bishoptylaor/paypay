@@ -155,12 +155,14 @@ func Cookies(cookies *http.Cookie) CfgOp {
 	}
 }
 
+// Prefix this function will suppress anything already in c.Prefix and change it to new prefixfuncs
 func Prefix(prefix ...ReqPrefixFunc) CfgOp {
 	return func(c *httpConfig) {
 		c.Prefix = append([]ReqPrefixFunc{}, prefix...)
 	}
 }
 
+// Suffix same as Prefix function
 func Suffix(suffix ...ResSuffixFunc) CfgOp {
 	return func(c *httpConfig) {
 		c.Suffix = append([]ResSuffixFunc{}, suffix...)

@@ -32,6 +32,7 @@ import (
 	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xutils"
+	"github.com/pkg/errors"
 	"net/http"
 )
 
@@ -69,7 +70,7 @@ func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error)
 		return nil, err
 	}
 
-	_, err = client.GetAccessToken(ctx)
+	_, err = client.getAccessToken(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -78,11 +79,12 @@ func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error)
 	return client, nil
 }
 
-func (c *Client) Use(ops ...Settings) {
+func (c *Client) Use(ops ...Settings) *Client {
 	for _, op := range ops {
 		op(c)
 		c.ops = append(c.ops, op)
 	}
+	return c
 }
 
 func (c *Client) setupCheck() error {
@@ -99,7 +101,7 @@ func (c *Client) handleResponse(ctx context.Context, method Method, httpRes *htt
 		emptyRes.Error = string(bs)
 		emptyRes.ErrorResponse = new(entity.ErrorResponse)
 		if err := json.Unmarshal(bs, emptyRes.ErrorResponse); err != nil {
-			return pkg.WrapError("[handleResponse] wrong status code unmarshal err: ", err)
+			return errors.Wrap(err, "[handleResponse] wrong status code unmarshal err")
 		}
 		return nil
 	}
@@ -108,7 +110,7 @@ func (c *Client) handleResponse(ctx context.Context, method Method, httpRes *htt
 	}
 
 	if err := json.Unmarshal(bs, response); err != nil {
-		return pkg.WrapError("[handleResponse] response unmarshal err: ", err)
+		return errors.Wrap(err, "[handleResponse] response unmarshal err")
 	}
 	return nil
 }

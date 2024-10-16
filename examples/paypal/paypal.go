@@ -24,9 +24,9 @@ package main
 
 import (
 	"context"
+	"github.com/Bishoptylaor/paypay/examples/paypal/cco"
 	"github.com/Bishoptylaor/paypay/examples/paypal/orders"
 	"github.com/Bishoptylaor/paypay/examples/paypal/products"
-	"github.com/Bishoptylaor/paypay/examples/paypal/singlecall"
 	"github.com/Bishoptylaor/paypay/paypal"
 	"github.com/Bishoptylaor/paypay/pkg/xlog"
 )
@@ -39,6 +39,7 @@ var (
 func init() {
 	var err error
 	ctx = context.Background()
+	// basic
 	client, err = paypal.NewClient(ctx,
 		paypal.ClientID("AbSkAmeRl40PdAk7LTD-dKpu-I1kdTV6VYgywViwv7RKYjFmIeFDFeMBMoK2_uXadlrLLgsWjmTJV-xH"),
 		paypal.Secret("EJ8qu25jspPSLe65hwslbCWLUAoEm0wE9lOiHhSMikpfBj1-lRIAOHzC7OxuLb0lgLj5XuvOWTwBVOHp"),
@@ -52,8 +53,8 @@ func init() {
 func main() {
 	// RunOrderExamples()
 	// RunInvoiceExamples()
-	// RunProductsExamples()
-	SingleCallUsage()
+	RunProductsExamples()
+	CallOnceUsage()
 }
 
 func RunProductsExamples() {
@@ -74,6 +75,6 @@ func RunOrderExamples() {
 	// AuthorizeOrder(ctx, client)
 }
 
-func SingleCallUsage() {
-	singlecall.ListProducts(ctx, client)
+func CallOnceUsage() {
+	cco.ListProducts(ctx, client)
 }

@@ -36,4 +36,7 @@ type Operates struct {
 	PayloadPreSetter map[string][]paypay.PayloadPreSetter
 	HClient          xhttp.HttpClientWrapper
 	Logger           xlog.XLogger
+
+	PrefixFunc []xhttp.ReqPrefixFunc
+	SuffixFunc []xhttp.ResSuffixFunc
 }

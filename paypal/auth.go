@@ -40,7 +40,7 @@ import (
 // GetAccessToken
 // 获取AccessToken（Get an access token）
 // 文档：https://developer.paypal.com/docs/api/reference/get-an-access-token
-func (c *Client) GetAccessToken(ctx context.Context) (token *entity.AccessToken, err error) {
+func (c *Client) getAccessToken(ctx context.Context) (token *entity.AccessToken, err error) {
 	// Authorization
 	authHeader := consts.AuthorizationPrefixBasic + base64.StdEncoding.EncodeToString([]byte(c.ClientID+":"+c.ClientSecret))
 
@@ -55,8 +55,8 @@ func (c *Client) GetAccessToken(ctx context.Context) (token *entity.AccessToken,
 			"Accept":                   "*/*",
 			consts.HeaderAuthorization: authHeader,
 		}),
-		xhttp.Prefix(PPReqPrefix(c.debug, c.Logger)),
-		xhttp.Suffix(PPResSuffix(c.debug, c.Logger)),
+		xhttp.Prefix(c.PrefixFunc...),
+		xhttp.Suffix(c.SuffixFunc...),
 	)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (c *Client) autoRefreshToken(ctx context.Context) {
 	for {
 		time.Sleep(c.ExpireIn / 2 * time.Second)
 		err := xutils.Retry(func() error {
-			_, err := c.GetAccessToken(ctx)
+			_, err := c.getAccessToken(ctx)
 			if err != nil {
 				return err
 			}

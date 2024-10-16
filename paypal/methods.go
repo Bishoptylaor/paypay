@@ -34,6 +34,27 @@ type Method struct {
 	Checker         paypay.PayloadRuler
 }
 
+type QueryPlaceholder string
+
+var (
+	OrderId         QueryPlaceholder = "order_id"
+	TrackerId       QueryPlaceholder = "tracker_id"
+	AuthorizationId QueryPlaceholder = "authorization_id"
+	CaptureId       QueryPlaceholder = "capture_id"
+	RefundId        QueryPlaceholder = "refund_id"
+	PayoutItemId    QueryPlaceholder = "payout_item_id"
+	InvoiceId       QueryPlaceholder = "invoice_id"
+	TemplateId      QueryPlaceholder = "template_id"
+	SubscriptionId  QueryPlaceholder = "subscription_id"
+	PlanId          QueryPlaceholder = "plan_id"
+	ProductId       QueryPlaceholder = "product_id"
+	DisputeId       QueryPlaceholder = "dispute_id"
+)
+
+func (qp QueryPlaceholder) String() string {
+	return string(qp)
+}
+
 // 订单相关
 var (
 	// CreateOrder 创建订单 POST
@@ -54,51 +75,51 @@ all(purchase_units, {.Amount != nil}) `,
 	}
 	// ShowOrderDetails order_id 查看订单详情 GET
 	ShowOrderDetails Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}?{{.params}}",
+		Uri:             "/v2/checkout/orders/{{.order_id}}?{{.params}}",
 		ValidStatusCode: http.StatusOK,
 		Do:              GetPayPal,
 	}
 	// UpdateOrder order_id 更新订单 PATCH
 	UpdateOrder Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}",
+		Uri:             "/v2/checkout/orders/{{.order_id}}",
 		ValidStatusCode: http.StatusNoContent,
 		Do:              PatchPayPal,
 	}
 	// ConfirmOrder order_id 订单支付确认 POST
 	ConfirmOrder Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}/confirm-payment-source",
+		Uri:             "/v2/checkout/orders/{{.order_id}}/confirm-payment-source",
 		ValidStatusCode: http.StatusOK,
 		Do:              PostPayPal,
 		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
-			"/v2/checkout/orders/{{.id}}/confirm-payment-source": []paypay.Ruler{
+			"/v2/checkout/orders/{{.order_id}}/confirm-payment-source": []paypay.Ruler{
 				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
 			},
 		}),
 	}
 	// AuthorizeOrder order_id 订单支付授权 POST
 	AuthorizeOrder Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}/authorize",
+		Uri:             "/v2/checkout/orders/{{.order_id}}/authorize",
 		ValidStatusCode: http.StatusCreated,
 		Do:              PostPayPal,
 	}
 	// CaptureOrder order_id 订单支付捕获 POST
 	CaptureOrder Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}/capture",
+		Uri:             "/v2/checkout/orders/{{.order_id}}/capture",
 		ValidStatusCode: http.StatusCreated,
 		Do:              PostPayPal,
 		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
-			"/v2/checkout/orders/{{.id}}/capture": []paypay.Ruler{
+			"/v2/checkout/orders/{{.order_id}}/capture": []paypay.Ruler{
 				paypay.NewRuler("payment_source", `payment_source != nil`, "payment_source 不为空"),
 			},
 		}),
 	}
 	// AddTracking4Order order_id 订单追踪 POST
 	AddTracking4Order Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}/track",
+		Uri:             "/v2/checkout/orders/{{.order_id}}/track",
 		ValidStatusCode: http.StatusCreated,
 		Do:              PostPayPal,
 		Checker: paypay.InjectRuler(map[string][]paypay.Ruler{
-			"/v2/checkout/orders/{{.id}}/track": []paypay.Ruler{
+			"/v2/checkout/orders/{{.order_id}}/track": []paypay.Ruler{
 				paypay.NewRuler("tracking_number", `tracking_number != nil`, "运单号不为空"),
 				paypay.NewRuler("carrier", `carrier != nil`, "承运机构不为空"),
 				paypay.NewRuler("capture_id", `capture_id != nil`, "capture_id 不为空"),
@@ -107,7 +128,7 @@ all(purchase_units, {.Amount != nil}) `,
 	}
 	// UpOrCancelTracking4Order order_id, tracker_id 更新或取消订单追踪 POST
 	UpOrCancelTracking4Order Method = Method{
-		Uri:             "/v2/checkout/orders/{{.id}}/trackers/{{.tracker_id}}",
+		Uri:             "/v2/checkout/orders/{{.order_id}}/trackers/{{.tracker_id}}",
 		ValidStatusCode: http.StatusNoContent,
 		Do:              PostPayPal,
 	}
@@ -479,8 +500,8 @@ var (
 
 // Transaction 交易
 var (
-	// ListTranscations 交易列表
-	ListTranscations Method = Method{
+	// ListTransactions 交易列表
+	ListTransactions Method = Method{
 		Uri:             "/v1/reporting/transactions?{{.params}}",
 		ValidStatusCode: http.StatusOK,
 		Do:              GetPayPal,

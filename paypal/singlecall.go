@@ -24,28 +24,54 @@ package paypal
 
 import (
 	"context"
+	"errors"
 	"github.com/Bishoptylaor/paypay"
-	"github.com/Bishoptylaor/paypay/paypal/consts"
 	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg"
 )
 
-// CustomSingleCall
+// CustomCallOnce
 // single call with custom settings
+// @params: ctx = context of any function caller
+//
+// @params: method = Paypal request predefined info
+//
+// @params: getKv = placeholder and target value of uri eg:
+//     /v2/checkout/orders/{{.order_id}}?{{.params}}
+//     getKv can be : func() map[string]string {return map[string]string{OrderId.String(): "yourId"}}
+//     you can skip params because its a build-in placeholder no need concerned from outside of the function.
+//     will return an error if getKv is nil.
+//
+// @params: pl = payload you build to make a http request. should be nil if no use.
+//
+// @params: query = will transform to urlparams and attached to uri in method. should be nil if no use.
+//
+// @params: patches = payload of your changes in update* requests. should be nil if no use.
+//
+// @params: emptyRes = err msg in case there`s sth. wrong with the request.
+//
+// @params: response
+//
+// @params: ops = custom settings you want to use in this request.
+//
 // you can check out usage in examples
-// ALERT: DO NOT support changes on ClientID or Secret
-func (c *Client) CustomSingleCall(
+func (c *Client) CustomCallOnce(
 	ctx context.Context,
 	method Method,
 	getKV func() map[string]string,
 	pl paypay.Payload,
 	query paypay.Payload,
 	patches []*entity.Patch,
-	res interface{},
+	emptyRes entity.EmptyRes,
 	response interface{},
 	ops ...Settings) error {
 
+	if getKV == nil {
+		return errors.New("getKV function is required")
+	}
+
 	// c2 is a copied client only in this func
+	// use original client`s config as default
 	c2 := &Client{
 		Config:   c.Config,
 		Operates: c.Operates,
@@ -73,8 +99,6 @@ func (c *Client) CustomSingleCall(
 	if err != nil {
 		return err
 	}
-	emptyRes := entity.EmptyRes{Code: consts.Success}
-	res = &entity.AddTrackerForOrderRes{EmptyRes: emptyRes}
 	if err = c2.handleResponse(ctx, method, httpRes, bs, &emptyRes, response); err != nil {
 		return err
 	}

@@ -23,6 +23,7 @@
 package paypal
 
 import (
+	"context"
 	"github.com/Bishoptylaor/paypay"
 	"github.com/Bishoptylaor/paypay/alipay/consts"
 	"github.com/Bishoptylaor/paypay/pkg"
@@ -78,7 +79,7 @@ func DefaultHClient() Settings {
 	return HClient(xhttp.GetDefaultClient())
 }
 
-func SetLogger(logger *xlog.Logger) Settings {
+func SetLogger(logger xlog.XLogger) Settings {
 	return func(client *Client) {
 		client.Logger = logger
 	}
@@ -122,15 +123,55 @@ func DefaultHeaders() Settings {
 	})
 }
 
+func PrefixFunc(suppress bool, pres ...xhttp.ReqPrefixFunc) Settings {
+	return func(client *Client) {
+		if suppress {
+			client.PrefixFunc = pres
+			return
+		}
+		if client.PrefixFunc == nil {
+			client.PrefixFunc = []xhttp.ReqPrefixFunc{}
+		}
+		client.PrefixFunc = append(client.PrefixFunc, pres...)
+	}
+}
+
+func DefaultPrefixFunc() Settings {
+	return func(client *Client) {
+		PrefixFunc(true, PPReqPrefix(client.debug, client.Logger))
+	}
+}
+
+func SuffixFunc(suppress bool, sufs ...xhttp.ResSuffixFunc) Settings {
+	return func(client *Client) {
+		if suppress {
+			client.SuffixFunc = sufs
+			return
+		}
+		if client.SuffixFunc == nil {
+			client.SuffixFunc = []xhttp.ResSuffixFunc{}
+		}
+		client.SuffixFunc = append(client.SuffixFunc, sufs...)
+	}
+}
+
+func DefaultSuffixFunc() Settings {
+	return func(client *Client) {
+		SuffixFunc(true, PPResSuffix(client.debug, client.Logger))
+	}
+}
+
 // NewSettings 标准初始化配置
 func NewSettings(ins ...Settings) []Settings {
 	return append(
 		append(
 			[]Settings{},
-			DefaultLogger(),  // 设置 logger
-			DefaultHClient(), // 设置 Http client
-			DefaultChecker(), // 设置 checker 初始化
-			DefaultHeaders(), // 设置 header 自定义部分
+			DefaultLogger(),     // 设置 logger
+			DefaultHClient(),    // 设置 Http client
+			DefaultChecker(),    // 设置 checker 初始化
+			DefaultHeaders(),    // 设置 header 自定义部分
+			DefaultPrefixFunc(), // 设置 http prefix hooks, will pass on to client.HClient and run before requests are made.
+			DefaultSuffixFunc(), // 设置 http suffix hooks, will pass on to client.HClient and run after requests are made.
 		), ins...,
 	)
 }
@@ -150,4 +191,15 @@ func DefaultSettings(ins ...Settings) []Settings {
 
 func PackSettings(i1 []Settings, i2 ...Settings) []Settings {
 	return append(i1, i2...)
+}
+
+func NewToken(ctx context.Context, clientId, clientSecret string) Settings {
+	return func(client *Client) {
+		client.ClientID = clientId
+		client.ClientSecret = clientSecret
+		_, err := client.getAccessToken(ctx)
+		if err != nil {
+			client.Logger.Errorf("[NewToken]Error getting access token: %v", err)
+		}
+	}
 }

@@ -29,6 +29,7 @@ import (
 	"github.com/Bishoptylaor/paypay/paypal/entity"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xnet/xhttp"
+	"github.com/pkg/errors"
 )
 
 // EscalateDisputeToClaim
@@ -170,12 +171,12 @@ func (c *Client) PartiallyUpdateDispute(ctx context.Context, disputeId string, p
 		"dispute_id": disputeId,
 	}), nil, patches)
 	if err != nil {
-		return nil, pkg.WrapError("[PartiallyUpdateDispute] do method: ", err)
+		return nil, errors.Wrap(err, "[PartiallyUpdateDispute] do method")
 	}
 	emptyRes := entity.EmptyRes{Code: consts.Success}
 	res = &entity.PartiallyUpdateDisputeRes{EmptyRes: emptyRes}
 	if err = c.handleResponse(ctx, method, httpRes, bs, &emptyRes, nil); err != nil {
-		return res, pkg.WrapError("[PartiallyUpdateDispute]: ", err)
+		return res, errors.Wrap(err, "[PartiallyUpdateDispute]")
 	}
 	return res, nil
 }
