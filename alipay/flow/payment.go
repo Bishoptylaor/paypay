@@ -20,7 +20,7 @@ type Face2FacePay interface {
 	TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeFastpayRefundQueryResponse, err error) // 统一收单交易退款查询
 	TradeCancel(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCancelResponse, err error)                         // 统一收单交易撤销接口
 	TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error)                           // 统一收单交易关闭接口
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 
@@ -32,7 +32,7 @@ type AppPay interface {
 	TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error)                           // 统一收单交易关闭接口
 	TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeFastpayRefundQueryResponse, err error) // 统一收单交易退款查询
 
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 
@@ -44,7 +44,7 @@ type PhoneWebPay interface {
 	TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error)                           // 统一收单交易关闭接口
 	TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeFastpayRefundQueryResponse, err error) // 统一收单交易退款查询
 
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 
@@ -56,7 +56,7 @@ type PcPagePay interface {
 	TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error)                           // 统一收单交易关闭接口
 	TradeFastPayRefundQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeFastpayRefundQueryResponse, err error) // 统一收单交易退款查询
 
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 
@@ -75,7 +75,7 @@ type MerchantDeduction interface {
 	TradeClose(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCloseResponse, err error)   // 统一收单交易关闭接口
 	TradeCancel(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeCancelResponse, err error) // 统一收单交易撤销接口
 
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 
@@ -104,7 +104,7 @@ type PreLicensingPay interface {
 	TradeOrderInfoSync(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeOrderInfoSyncResponse, err error)           // 支付宝订单信息同步接口
 
 	// 账单
-	DataBillFlow
+	DataBillDownloadFlow
 }
 
 // QrcodePay 订单码支付
@@ -116,7 +116,7 @@ type QrcodePay interface {
 	TradeQuery(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeQueryResponse, err error)                           // 统一收单交易查询接口
 	TradeRefund(ctx context.Context, pl paypay.Payload) (aliRes *entity.TradeRefundResponse, err error)                         // 统一收单交易退款接口
 
-	DataBillFlow
+	DataBillDownloadFlow
 	ExecuteFlow
 }
 

@@ -6,70 +6,6 @@ type DataBillBalanceQueryResponse struct {
 	SignData     string                `json:"-"`
 	Sign         string                `json:"sign"`
 }
-type DataBillBalancehisQueryResponse struct {
-	Response     *DataBillBalancehisQuery `json:"alipay_data_bill_balancehis_query_response"`
-	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
-	SignData     string                   `json:"-"`
-	Sign         string                   `json:"sign"`
-}
-
-type DataBillAccountLogQueryResponse struct {
-	Response     *DataBillAccountLogQuery `json:"alipay_data_bill_accountlog_query_response"`
-	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
-	SignData     string                   `json:"-"`
-	Sign         string                   `json:"sign"`
-}
-
-type DataBillEreceiptApplyResponse struct {
-	Response     *DataBillEreceiptApply `json:"alipay_data_bill_ereceipt_apply_response"`
-	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
-	SignData     string                 `json:"-"`
-	Sign         string                 `json:"sign"`
-}
-
-type DataBillEreceiptQueryResponse struct {
-	Response     *DataBillEreceiptQuery `json:"alipay_data_bill_ereceipt_query_response"`
-	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
-	SignData     string                 `json:"-"`
-	Sign         string                 `json:"sign"`
-}
-
-type DataBillDownloadUrlQueryResponse struct {
-	Response     *DataBillDownloadUrlQuery `json:"alipay_data_dataservice_bill_downloadurl_query_response"`
-	AlipayCertSn string                    `json:"alipay_cert_sn,omitempty"`
-	SignData     string                    `json:"-"`
-	Sign         string                    `json:"sign"`
-}
-
-type DataBillSellQueryResponse struct {
-	Response     *DataBillSellQuery `json:"alipay_data_bill_sell_query_response"`
-	AlipayCertSn string             `json:"alipay_cert_sn,omitempty"`
-	SignData     string             `json:"-"`
-	Sign         string             `json:"sign"`
-}
-
-type DataBillBuyQueryResponse struct {
-	Response     *DataBillBuyQuery `json:"alipay_data_bill_buy_query_response"`
-	AlipayCertSn string            `json:"alipay_cert_sn,omitempty"`
-	SignData     string            `json:"-"`
-	Sign         string            `json:"sign"`
-}
-
-type DataBillTransferQueryResponse struct {
-	Response     *DataBillTransferQuery `json:"alipay_data_bill_transfer_query_response"`
-	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
-	SignData     string                 `json:"-"`
-	Sign         string                 `json:"sign"`
-}
-
-type DataBillBailQueryResponse struct {
-	Response     *DataBillBailQuery `json:"alipay_data_bill_bail_query_response"`
-	AlipayCertSn string             `json:"alipay_cert_sn,omitempty"`
-	SignData     string             `json:"-"`
-	Sign         string             `json:"sign"`
-}
-
-// =========================================================分割=========================================================
 
 type DataBillBalanceQuery struct {
 	ErrorResponse
@@ -79,19 +15,149 @@ type DataBillBalanceQuery struct {
 	SettleAmount    string `json:"settle_amount,omitempty"` // 当前账户的待结算金额，单位（元）
 }
 
+// =========================================================分割=========================================================
+
+type DataBillBalancehisQueryResponse struct {
+	Response     *DataBillBalancehisQuery `json:"alipay_data_bill_balancehis_query_response"`
+	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
+	SignData     string                   `json:"-"`
+	Sign         string                   `json:"sign"`
+}
+
 type DataBillBalancehisQuery struct {
 	ErrorResponse
 	BeginningBalance string `json:"beginning_balance"` // 期初余额
 	EndingBalance    string `json:"ending_balance"`    // 期末余额
 }
 
-type DataBillAccountLogQuery struct {
+// =========================================================分割=========================================================
+
+type DataBillAccountlogQueryResponse struct {
+	Response     *DataBillAccountlogQuery `json:"alipay_data_bill_accountlog_query_response"`
+	AlipayCertSn string                   `json:"alipay_cert_sn,omitempty"`
+	SignData     string                   `json:"-"`
+	Sign         string                   `json:"sign"`
+}
+
+type DataBillAccountlogQuery struct {
 	ErrorResponse
 	PageNo     string                  `json:"page_no"`    // 分页号，从1开始
 	PageSize   string                  `json:"page_size"`  // 分页大小1000-2000
 	TotalSize  string                  `json:"total_size"` // 账务明细总数。返回满足查询条件的明细的数量
 	DetailList []*AccountLogItemResult `json:"detail_list,omitempty"`
 }
+
+// =========================================================分割=========================================================
+
+type DataBillEreceiptApplyResponse struct {
+	Response     *DataBillEreceiptApply `json:"alipay_data_bill_ereceipt_apply_response"`
+	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
+	SignData     string                 `json:"-"`
+	Sign         string                 `json:"sign"`
+}
+
+type DataBillEreceiptApply struct {
+	ErrorResponse
+	FileId string `json:"file_id"` // 文件申请号file_id信息。使用file_id可以查询处理状态，有效期：2天
+}
+
+// =========================================================分割=========================================================
+
+type DataBillEreceiptQueryResponse struct {
+	Response     *DataBillEreceiptQuery `json:"alipay_data_bill_ereceipt_query_response"`
+	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
+	SignData     string                 `json:"-"`
+	Sign         string                 `json:"sign"`
+}
+
+type DataBillEreceiptQuery struct {
+	ErrorResponse
+	Status       string `json:"status"`                  // 处理状态。枚举值如下： INIT：初始化。 PROCESS：处理中。 SUCCESS：成功。 FAIL：失败。
+	DownloadUrl  string `json:"download_url,omitempty"`  // 下载链接，status 为 SUCCESS 时返回。用户可以使用此http链接下载文件内容。有效时间为 30s。 生成文件为PDF格式，下载即可获取电子回单 PDF 内容。
+	ErrorMessage string `json:"error_message,omitempty"` // 如果生成失败，则会返回失败原因
+}
+
+// =========================================================分割=========================================================
+
+type DataBillDownloadUrlQueryResponse struct {
+	Response     *DataBillDownloadUrlQuery `json:"alipay_data_dataservice_bill_downloadurl_query_response"`
+	AlipayCertSn string                    `json:"alipay_cert_sn,omitempty"`
+	SignData     string                    `json:"-"`
+	Sign         string                    `json:"sign"`
+}
+
+type DataBillDownloadUrlQuery struct {
+	ErrorResponse
+	BillDownloadUrl string `json:"bill_download_url"` // 账单下载地址链接，获取连接后30秒后未下载，链接地址失效。
+	BillFileCode    string `json:"bill_file_code"`    // 描述本次申请的账单文件状态。 EMPTY_DATA_WITH_BILL_FILE：当天无账单业务数据&&可以获取到空数据账单文件
+}
+
+// =========================================================分割=========================================================
+
+type DataBillSellQueryResponse struct {
+	Response     *DataBillSellQuery `json:"alipay_data_bill_sell_query_response"`
+	AlipayCertSn string             `json:"alipay_cert_sn,omitempty"`
+	SignData     string             `json:"-"`
+	Sign         string             `json:"sign"`
+}
+
+type DataBillSellQuery struct {
+	ErrorResponse
+	PageNo     string             `json:"page_no"`     // 分页号，从1开始
+	PageSize   string             `json:"page_size"`   // 分页大小1000-2000
+	TotalSize  string             `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
+	DetailList []*TradeItemResult `json:"detail_list"` // 交易流水详情
+}
+
+// =========================================================分割=========================================================
+
+type DataBillBuyQueryResponse struct {
+	Response     *DataBillBuyQuery `json:"alipay_data_bill_buy_query_response"`
+	AlipayCertSn string            `json:"alipay_cert_sn,omitempty"`
+	SignData     string            `json:"-"`
+	Sign         string            `json:"sign"`
+}
+
+type DataBillBuyQuery struct {
+	ErrorResponse
+	PageNo     string             `json:"page_no"`     // 分页号，从1开始
+	PageSize   string             `json:"page_size"`   // 分页大小1000-2000
+	TotalSize  string             `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
+	DetailList []*TradeItemResult `json:"detail_list"` // 交易流水详情
+}
+
+// =========================================================分割=========================================================
+
+type DataBillTransferQueryResponse struct {
+	Response     *DataBillTransferQuery `json:"alipay_data_bill_transfer_query_response"`
+	AlipayCertSn string                 `json:"alipay_cert_sn,omitempty"`
+	SignData     string                 `json:"-"`
+	Sign         string                 `json:"sign"`
+}
+
+type DataBillTransferQuery struct {
+	ErrorResponse
+	PageNo     string                  `json:"page_no"`     // 分页号，从1开始
+	PageSize   string                  `json:"page_size"`   // 分页大小1000-2000
+	TotalSize  string                  `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
+	DetailList []*TransferDetailResult `json:"detail_list"` // 交易流水详情
+}
+
+// =========================================================分割=========================================================
+
+type DataBillBailQueryResponse struct {
+	Response     *DataBillBailQuery `json:"alipay_data_bill_bail_query_response"`
+	AlipayCertSn string             `json:"alipay_cert_sn,omitempty"`
+	SignData     string             `json:"-"`
+	Sign         string             `json:"sign"`
+}
+
+type DataBillBailQuery struct {
+	ErrorResponse
+	DetailList []*BailDetailResult `json:"detail_list"` // 保证金明细列表，最多返回5000条
+}
+
+// =========================================================分割=========================================================
 
 type AccountLogItemResult struct {
 	TransDt             string `json:"trans_dt"`                         // 入账时间
@@ -113,32 +179,6 @@ type AccountLogItemResult struct {
 	StoreName           string `json:"store_name,omitempty"`             // 门店信息
 }
 
-type DataBillDownloadUrlQuery struct {
-	ErrorResponse
-	BillDownloadUrl string `json:"bill_download_url"` // 账单下载地址链接，获取连接后30秒后未下载，链接地址失效。
-	BillFileCode    string `json:"bill_file_code"`    // 描述本次申请的账单文件状态。 EMPTY_DATA_WITH_BILL_FILE：当天无账单业务数据&&可以获取到空数据账单文件
-}
-
-type DataBillEreceiptApply struct {
-	ErrorResponse
-	FileId string `json:"file_id"` // 文件申请号file_id信息。使用file_id可以查询处理状态，有效期：2天
-}
-
-type DataBillEreceiptQuery struct {
-	ErrorResponse
-	Status       string `json:"status"`                  // 处理状态。枚举值如下： INIT：初始化。 PROCESS：处理中。 SUCCESS：成功。 FAIL：失败。
-	DownloadUrl  string `json:"download_url,omitempty"`  // 下载链接，status 为 SUCCESS 时返回。用户可以使用此http链接下载文件内容。有效时间为 30s。 生成文件为PDF格式，下载即可获取电子回单 PDF 内容。
-	ErrorMessage string `json:"error_message,omitempty"` // 如果生成失败，则会返回失败原因
-}
-
-type DataBillSellQuery struct {
-	ErrorResponse
-	PageNo     string             `json:"page_no"`     // 分页号，从1开始
-	PageSize   string             `json:"page_size"`   // 分页大小1000-2000
-	TotalSize  string             `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
-	DetailList []*TradeItemResult `json:"detail_list"` // 交易流水详情
-}
-
 type TradeItemResult struct {
 	GmtCreate       string `json:"gmt_create"`              // 交易创建时间
 	GmtPay          string `json:"gmt_pay"`                 // 交易支付时间
@@ -158,22 +198,6 @@ type TradeItemResult struct {
 	GoodsMemo       string `json:"goods_memo,omitempty"`    // 商品备注信息
 }
 
-type DataBillBuyQuery struct {
-	ErrorResponse
-	PageNo     string             `json:"page_no"`     // 分页号，从1开始
-	PageSize   string             `json:"page_size"`   // 分页大小1000-2000
-	TotalSize  string             `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
-	DetailList []*TradeItemResult `json:"detail_list"` // 交易流水详情
-}
-
-type DataBillTransferQuery struct {
-	ErrorResponse
-	PageNo     string                  `json:"page_no"`     // 分页号，从1开始
-	PageSize   string                  `json:"page_size"`   // 分页大小1000-2000
-	TotalSize  string                  `json:"total_size"`  // 账务明细总数。返回满足查询条件的明细的数量
-	DetailList []*TransferDetailResult `json:"detail_list"` // 交易流水详情
-}
-
 type TransferDetailResult struct {
 	TransDt       string `json:"trans_dt"`                 // 业务发生时间
 	OrderNo       string `json:"order_no"`                 // 业务订单号。该笔业务单据的唯一识别编号
@@ -186,11 +210,6 @@ type TransferDetailResult struct {
 	ServiceFee    string `json:"service_fee,omitempty"`    // 服务费金额
 	InstructionId string `json:"instruction_id,omitempty"` // 银行单据号。对账使用，无需脱敏
 	Memo          string `json:"memo,omitempty"`           // 备注信息
-}
-
-type DataBillBailQuery struct {
-	ErrorResponse
-	DetailList []*BailDetailResult `json:"detail_list"` // 保证金明细列表，最多返回5000条
 }
 
 type BailDetailResult struct {

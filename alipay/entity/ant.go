@@ -6,6 +6,14 @@ type AntMerchantExpandShopCreateResponse struct {
 	SignData     string                       `json:"-"`
 	Sign         string                       `json:"sign"`
 }
+
+type AntMerchantExpandShopCreate struct {
+	ErrorResponse
+	OrderId string `json:"order_id"`
+}
+
+// =========================================================分割=========================================================
+
 type AntMerchantExpandShopModifyResponse struct {
 	Response     *AntMerchantExpandShopModify `json:"ant_merchant_expand_shop_modify_response"`
 	AlipayCertSn string                       `json:"alipay_cert_sn,omitempty"`
@@ -13,71 +21,18 @@ type AntMerchantExpandShopModifyResponse struct {
 	Sign         string                       `json:"sign"`
 }
 
+type AntMerchantExpandShopModify struct {
+	ErrorResponse
+	OrderId string `json:"order_id"`
+}
+
+// =========================================================分割=========================================================
+
 type AntMerchantExpandOrderQueryResponse struct {
 	Response     *AntMerchantExpandOrderQuery `json:"ant_merchant_expand_order_query_response"`
 	AlipayCertSn string                       `json:"alipay_cert_sn,omitempty"`
 	SignData     string                       `json:"-"`
 	Sign         string                       `json:"sign"`
-}
-
-type AntMerchantExpandShopPageQueryResponse struct {
-	Response     *AntMerchantExpandShopPageQuery `json:"ant_merchant_expand_shop_page_query_response"`
-	AlipayCertSn string                          `json:"alipay_cert_sn,omitempty"`
-	SignData     string                          `json:"-"`
-	Sign         string                          `json:"sign"`
-}
-
-type AntMerchantExpandShopQueryResponse struct {
-	Response     *AntMerchantExpandShopQuery `json:"ant_merchant_expand_shop_query_response"`
-	AlipayCertSn string                      `json:"alipay_cert_sn,omitempty"`
-	SignData     string                      `json:"-"`
-	Sign         string                      `json:"sign"`
-}
-
-type AntMerchantExpandShopCloseResponse struct {
-	Response     *AntMerchantExpandShopClose `json:"ant_merchant_expand_shop_close_response"`
-	AlipayCertSn string                      `json:"alipay_cert_sn,omitempty"`
-	SignData     string                      `json:"-"`
-	Sign         string                      `json:"sign"`
-}
-
-type AntMerchantExpandIndirectImageUploadResponse struct {
-	Response     *AntMerchantExpandIndirectImageUpload `json:"ant_merchant_expand_indirect_image_upload_response"`
-	AlipayCertSn string                                `json:"alipay_cert_sn,omitempty"`
-	SignData     string                                `json:"-"`
-	Sign         string                                `json:"sign"`
-}
-
-type AntMerchantExpandMccQueryResponse struct {
-	Response     *AntMerchantExpandMccQuery `json:"ant_merchant_expand_mcc_query_response"`
-	AlipayCertSn string                     `json:"alipay_cert_sn,omitempty"`
-	SignData     string                     `json:"-"`
-	Sign         string                     `json:"sign"`
-}
-
-type AntMerchantExpandShopConsultResponse struct {
-	Response     *AntMerchantExpandShopConsult `json:"ant_merchant_expand_shop_consult_response"`
-	AlipayCertSn string                        `json:"alipay_cert_sn,omitempty"`
-	SignData     string                        `json:"-"`
-	Sign         string                        `json:"sign"`
-}
-
-type AntMerchantExpandShopReceiptaccountSaveResponse struct {
-	Response     *AntMerchantExpandShopReceiptaccountSave `json:"ant_merchant_expand_shop_receiptaccount_save_response"`
-	AlipayCertSn string                                   `json:"alipay_cert_sn,omitempty"`
-	SignData     string                                   `json:"-"`
-	Sign         string                                   `json:"sign"`
-}
-
-// =========================================================分割=========================================================
-
-type AntMerchantExpandShopCreate struct {
-	ErrorResponse
-	OrderId string `json:"order_id"`
-}
-type AntMerchantExpandShopModify struct {
-	ErrorResponse
-	OrderId string `json:"order_id"`
 }
 
 type AntMerchantExpandOrderQuery struct {
@@ -89,6 +44,15 @@ type AntMerchantExpandOrderQuery struct {
 	ExtInfo      string   `json:"ext_info"`
 }
 
+// =========================================================分割=========================================================
+
+type AntMerchantExpandShopPageQueryResponse struct {
+	Response     *AntMerchantExpandShopPageQuery `json:"ant_merchant_expand_shop_page_query_response"`
+	AlipayCertSn string                          `json:"alipay_cert_sn,omitempty"`
+	SignData     string                          `json:"-"`
+	Sign         string                          `json:"sign"`
+}
+
 type AntMerchantExpandShopPageQuery struct {
 	ErrorResponse
 	ShopInfos   []*AntShopInfo `json:"shop_infos"`
@@ -96,36 +60,13 @@ type AntMerchantExpandShopPageQuery struct {
 	AlipayPoiid string         `json:"alipay_poiid"`
 }
 
-type AntShopInfo struct {
-	ShopId          string           `json:"shop_id"`
-	BusinessAddress *BusinessAddress `json:"business_address"`
-	ShopCategory    string           `json:"shop_category"`
-	NewShopCategory string           `json:"new_shop_category"`
-	StoreId         string           `json:"store_id"`
-	ShopType        string           `json:"shop_type"`
-	ShopName        string           `json:"shop_name"`
-	ContactPhone    string           `json:"contact_phone"`
-	ContactMobile   string           `json:"contact_mobile"`
-	BusinessTime    []*BusinessTime  `json:"business_time"`
-	ShopStatus      string           `json:"shop_status"`
-	ShopInfoStatus  string           `json:"shop_info_status"`
-}
+// =========================================================分割=========================================================
 
-type BusinessAddress struct {
-	CityCode     string `json:"city_code"`
-	DistrictCode string `json:"district_code"`
-	Address      string `json:"address"`
-	ProvinceCode string `json:"province_code"`
-	Poiid        string `json:"poiid"`
-	Longitude    string `json:"longitude"`
-	Latitude     string `json:"latitude"`
-	Type         string `json:"type"`
-}
-
-type BusinessTime struct {
-	WeekDay   int    `json:"week_day"`
-	OpenTime  string `json:"open_time"`
-	CloseTime string `json:"close_time"`
+type AntMerchantExpandShopQueryResponse struct {
+	Response     *AntMerchantExpandShopQuery `json:"ant_merchant_expand_shop_query_response"`
+	AlipayCertSn string                      `json:"alipay_cert_sn,omitempty"`
+	SignData     string                      `json:"-"`
+	Sign         string                      `json:"sign"`
 }
 
 type AntMerchantExpandShopQuery struct {
@@ -172,8 +113,26 @@ type AntMerchantExpandShopQuery struct {
 	NewShopCategory string `json:"new_shop_category"`
 }
 
+// =========================================================分割=========================================================
+
+type AntMerchantExpandShopCloseResponse struct {
+	Response     *AntMerchantExpandShopClose `json:"ant_merchant_expand_shop_close_response"`
+	AlipayCertSn string                      `json:"alipay_cert_sn,omitempty"`
+	SignData     string                      `json:"-"`
+	Sign         string                      `json:"sign"`
+}
+
 type AntMerchantExpandShopClose struct {
 	ErrorResponse
+}
+
+// =========================================================分割=========================================================
+
+type AntMerchantExpandIndirectImageUploadResponse struct {
+	Response     *AntMerchantExpandIndirectImageUpload `json:"ant_merchant_expand_indirect_image_upload_response"`
+	AlipayCertSn string                                `json:"alipay_cert_sn,omitempty"`
+	SignData     string                                `json:"-"`
+	Sign         string                                `json:"sign"`
 }
 
 type AntMerchantExpandIndirectImageUpload struct {
@@ -181,9 +140,81 @@ type AntMerchantExpandIndirectImageUpload struct {
 	ImageId string `json:"image_id"`
 }
 
+// =========================================================分割=========================================================
+
+type AntMerchantExpandMccQueryResponse struct {
+	Response     *AntMerchantExpandMccQuery `json:"ant_merchant_expand_mcc_query_response"`
+	AlipayCertSn string                     `json:"alipay_cert_sn,omitempty"`
+	SignData     string                     `json:"-"`
+	Sign         string                     `json:"sign"`
+}
+
 type AntMerchantExpandMccQuery struct {
 	ErrorResponse
 	MccInfoList []*MccInfo `json:"mcc_info_list"`
+}
+
+// =========================================================分割=========================================================
+
+type AntMerchantExpandShopConsultResponse struct {
+	Response     *AntMerchantExpandShopConsult `json:"ant_merchant_expand_shop_consult_response"`
+	AlipayCertSn string                        `json:"alipay_cert_sn,omitempty"`
+	SignData     string                        `json:"-"`
+	Sign         string                        `json:"sign"`
+}
+
+type AntMerchantExpandShopConsult struct {
+	ErrorResponse
+	AccountAudit bool   `json:"account_audit"`
+	RiskAudit    bool   `json:"risk_audit"`
+	OrderId      string `json:"order_id"`
+}
+
+// =========================================================分割=========================================================
+
+type AntMerchantExpandShopReceiptaccountSaveResponse struct {
+	Response     *AntMerchantExpandShopReceiptaccountSave `json:"ant_merchant_expand_shop_receiptaccount_save_response"`
+	AlipayCertSn string                                   `json:"alipay_cert_sn,omitempty"`
+	SignData     string                                   `json:"-"`
+	Sign         string                                   `json:"sign"`
+}
+
+type AntMerchantExpandShopReceiptaccountSave struct {
+	ErrorResponse
+}
+
+// =========================================================分割=========================================================
+
+type AntShopInfo struct {
+	ShopId          string           `json:"shop_id"`
+	BusinessAddress *BusinessAddress `json:"business_address"`
+	ShopCategory    string           `json:"shop_category"`
+	NewShopCategory string           `json:"new_shop_category"`
+	StoreId         string           `json:"store_id"`
+	ShopType        string           `json:"shop_type"`
+	ShopName        string           `json:"shop_name"`
+	ContactPhone    string           `json:"contact_phone"`
+	ContactMobile   string           `json:"contact_mobile"`
+	BusinessTime    []*BusinessTime  `json:"business_time"`
+	ShopStatus      string           `json:"shop_status"`
+	ShopInfoStatus  string           `json:"shop_info_status"`
+}
+
+type BusinessAddress struct {
+	CityCode     string `json:"city_code"`
+	DistrictCode string `json:"district_code"`
+	Address      string `json:"address"`
+	ProvinceCode string `json:"province_code"`
+	Poiid        string `json:"poiid"`
+	Longitude    string `json:"longitude"`
+	Latitude     string `json:"latitude"`
+	Type         string `json:"type"`
+}
+
+type BusinessTime struct {
+	WeekDay   int    `json:"week_day"`
+	OpenTime  string `json:"open_time"`
+	CloseTime string `json:"close_time"`
 }
 
 type MccInfo struct {
@@ -194,15 +225,4 @@ type MccInfo struct {
 	IsSpecial           bool   `json:"is_special"`
 	SpecialQualRequired bool   `json:"special_qual_required"`
 	MccRequirements     string `json:"mcc_requirements"`
-}
-
-type AntMerchantExpandShopConsult struct {
-	ErrorResponse
-	AccountAudit bool   `json:"account_audit"`
-	RiskAudit    bool   `json:"risk_audit"`
-	OrderId      string `json:"order_id"`
-}
-
-type AntMerchantExpandShopReceiptaccountSave struct {
-	ErrorResponse
 }
