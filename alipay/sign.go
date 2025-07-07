@@ -14,6 +14,9 @@ import (
 	"github.com/Bishoptylaor/paypay/alipay/utils"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xcrypto"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/aescipher"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/base"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/padding"
 	"strings"
 )
 
@@ -180,11 +183,11 @@ func (c *Client) autoVerifySignByCert(ctx context.Context, bs []byte, method str
 func (c *Client) decrypt(data []byte) ([]byte, error) {
 	var plaintext = data
 	if len(data) > 1 && data[0] == '"' {
-		var ciphertext, err = xcrypto.Base64.Decode(string(data[1 : len(data)-1]))
+		var ciphertext, err = base.Base64.Decode(string(data[1 : len(data)-1]))
 		if err != nil {
 			return nil, err
 		}
-		plaintext, err = xcrypto.AESCBCDecrypt(ciphertext, c.encryptKey, c.encryptIV, c.encryptPadding)
+		plaintext, err = aescipher.CBC().Decrypt(context.Background(), ciphertext, c.encryptKey, c.encryptIV, c.encryptPadding)
 		if err != nil {
 			return nil, err
 		}
@@ -193,7 +196,7 @@ func (c *Client) decrypt(data []byte) ([]byte, error) {
 }
 
 func (c *Client) encrypt(originData string) (string, error) {
-	encryptData, err := xcrypto.AESCBCEncryptWithBase64([]byte(originData), c.encryptKey, c.encryptIV, xcrypto.PKCS7)
+	encryptData, err := aescipher.CBCBase64().EncryptBase64(context.Background(), []byte(originData), c.encryptKey, c.encryptIV, padding.PKCS7)
 	if err != nil {
 		return "", err
 	}
@@ -205,7 +208,7 @@ func (c *Client) sign(ctx context.Context, originData string) (signature string,
 	if err != nil {
 		return "", err
 	}
-	signature = xcrypto.Base64.Encode(sBytes)
+	signature = base.Base64.Encode(sBytes)
 	return signature, nil
 }
 
@@ -215,7 +218,7 @@ func (c *Client) verify(ctx context.Context, certSN string, data, signature []by
 		return err
 	}
 
-	if signature, err = xcrypto.Base64.Decode(string(signature)); err != nil {
+	if signature, err = base.Base64.Decode(string(signature)); err != nil {
 		return err
 	}
 

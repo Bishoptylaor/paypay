@@ -75,6 +75,52 @@ func (c *Client) getAccessToken(ctx context.Context) (token *entity.AccessToken,
 	return token, nil
 }
 
+// GetToken V2
+// 获取AccessToken（Get an access token）
+// 文档：https://developer.paypal.com/docs/api/reference/get-an-access-token
+func (c *Client) GetToken(ctx context.Context) (interface{}, error) {
+	// Authorization
+	authHeader := consts.AuthorizationPrefixBasic + base64.StdEncoding.EncodeToString([]byte(c.ClientID+":"+c.ClientSecret))
+
+	// Body
+	pl := make(paypay.Payload)
+	pl.Set("grant_type", "client_credentials")
+
+	res, bs, err := c.HClient.CallOp(ctx, pl,
+		xhttp.Req(xhttp.TypeFormData),
+		xhttp.Post(c.GenUrl(ctx, nil)(consts.AccessTokenPath)),
+		xhttp.Header(map[string]string{
+			"Accept":                   "*/*",
+			consts.HeaderAuthorization: authHeader,
+		}),
+		xhttp.Prefix(c.PrefixFunc...),
+		xhttp.Suffix(c.SuffixFunc...),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("HTTP Request Error, StatusCode = %d", res.StatusCode)
+	}
+
+	token := new(entity.AccessToken)
+	if err = json.Unmarshal(bs, token); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal(%s)：%w", string(bs), err)
+	}
+	c.Appid = token.Appid
+	c.AccessToken = token.AccessToken
+	c.ExpireIn = time.Duration(token.ExpiresIn)
+	return token, nil
+}
+
+func (c *Client) Wait() {
+	time.Sleep(c.ExpireIn / 2 * time.Second)
+}
+
+func (c *Client) MaxRetry() int {
+	return 3
+}
+
 // autoRefreshToken 自动刷新 token
 func (c *Client) autoRefreshToken(ctx context.Context) {
 	defer func() {

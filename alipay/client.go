@@ -32,6 +32,7 @@ import (
 	"github.com/Bishoptylaor/paypay/operate"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xcrypto"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/padding"
 	"sync"
 )
 
@@ -52,7 +53,7 @@ type Client struct {
 	encryptIV       []byte
 	encryptType     string
 	encryptKey      []byte
-	encryptPadding  xcrypto.Pad
+	encryptPadding  padding.Pad
 
 	// 签名组
 	encoder   xcrypto.Encoder

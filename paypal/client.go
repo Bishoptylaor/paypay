@@ -76,6 +76,8 @@ func NewClient(ctx context.Context, ops ...Settings) (client *Client, err error)
 	}
 	go client.autoRefreshToken(ctx)
 
+	go pkg.AutoRefreshToken(ctx, client, client.Logger)
+
 	return client, nil
 }
 

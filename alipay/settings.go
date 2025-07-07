@@ -30,6 +30,7 @@ import (
 	"github.com/Bishoptylaor/paypay/alipay/consts"
 	"github.com/Bishoptylaor/paypay/pkg"
 	"github.com/Bishoptylaor/paypay/pkg/xcrypto"
+	"github.com/Bishoptylaor/paypay/pkg/xcrypto/padding"
 	"github.com/Bishoptylaor/paypay/pkg/xlog"
 	"github.com/Bishoptylaor/paypay/pkg/xnet/xhttp"
 	"time"
@@ -207,7 +208,7 @@ func SetEncryptKey(key string) Settings {
 		client.encryptIV = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 		client.encryptType = "AES"
 		client.encryptKey = data
-		client.encryptPadding = xcrypto.PKCS7
+		client.encryptPadding = padding.PKCS7
 		return
 	}
 }

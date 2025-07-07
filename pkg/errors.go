@@ -21,6 +21,8 @@ var (
 	ErrMissingInitLogger = errors.New("未设置 logger")
 	ErrMissingInitHttp   = errors.New("未设置 http client")
 	ErrPhrasePrivateKey  = errors.New("私钥格式有误，请检查")
+
+	ErrBadResponse = errors.New("bad response error")
 )
 
 var (
